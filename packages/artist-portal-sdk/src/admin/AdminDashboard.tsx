@@ -33,7 +33,10 @@ import {
   DEFAULT_LOCATION_SITE_EDITOR,
   type ContentDataSourceMode,
   type VideoLinkItem,
-} from 'artist-portal-sdk';
+  type GalleryHomeData,
+  type GalleryTileItem,
+  type ProductStorefrontCategory,
+} from '../index';
 import {
   galleryTileDisplaySlug,
   normalizeGalleryHomeData,
@@ -137,7 +140,6 @@ import {
   PanelTopOpen,
   Braces,
 } from 'lucide-react';
-import type { GalleryHomeData, GalleryTileItem, ProductStorefrontCategory } from 'artist-portal-sdk';
 import { MarketingSiteCopyJsonEditor } from './MarketingSiteCopyJsonEditor';
 type ArtistProfile = {
   id: string;
@@ -5640,6 +5642,7 @@ const AdminDashboard = () => {
                         alert('Payload must look like English marketing copy (locale "en" and brand.siteName).');
                         return;
                       }
+                      const parsedPayload = parsed as Record<string, unknown>;
                       if (
                         !confirm(
                           'Push current marketing copy to Firestore as sitecopy/en? This overwrites the stored document.'
@@ -5650,7 +5653,7 @@ const AdminDashboard = () => {
                       setSaving(true);
                       try {
                         await setDoc(doc(db, 'sitecopy', 'en'), {
-                          ...parsed,
+                          ...parsedPayload,
                           updatedAt: serverTimestamp(),
                         });
                         emitMarketingSiteCopyUpdated();

@@ -1,5 +1,5 @@
 {
-  "name": "artist-portal-sdk",
+  "name": "@dmnstr8/artist-portal-sdk",
   "version": "0.1.0",
   "description": "Shared Firebase client factory, Firestore content helpers, and optional admin UI for artist marketing sites and portals.",
   "type": "module",
@@ -28,6 +28,14 @@
     "dist",
     "README.md"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmnstr8/artist-portal-sdk.git"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
