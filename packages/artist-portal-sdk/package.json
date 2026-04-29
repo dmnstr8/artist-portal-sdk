@@ -1,6 +1,6 @@
 {
   "name": "@dmnstr8/artist-portal-sdk",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "Shared Firebase client factory, Firestore content helpers, and optional admin UI for artist marketing sites and portals.",
   "type": "module",
   "license": "Apache-2.0",
