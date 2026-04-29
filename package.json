@@ -1,7 +1,7 @@
 {
   "name": "artist-portal-sdk",
   "private": true,
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "packageManager": "pnpm@8.14.1",
   "scripts": {
@@ -14,14 +14,12 @@
     "sync:public-assets": "node scripts/sync-public-assets.mjs",
     "lint": "pnpm run build:sdk && pnpm --filter client-theschneiderhair run lint",
     "seed:videolinks": "node scripts/seed-videolinks-firestore.mjs",
-
     "deploy:rules": "pnpm run deploy:rules:production",
     "deploy:rules:production": "firebase deploy --only firestore:rules -P production",
     "deploy:rules:release": "firebase deploy --only firestore:rules -P release",
     "deploy:hosting:production": "pnpm run build:production && firebase deploy --only hosting -P production",
     "deploy:hosting:release": "pnpm run build:release && firebase deploy --only hosting -P release",
     "deploy:live": "pnpm run deploy:hosting:release"
-
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
