@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;600;800&display=swap');
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: 'Noto Serif', serif;
+  --font-sans: 'Manrope', sans-serif;
+
+  --color-stone-50: #fcf9f8;
+  --color-stone-100: #f6f3f2;
+  --color-stone-200: #f0eded;
+  --color-stone-300: #eae7e7;
+  --color-stone-400: #dcd9d9;
+  --color-stone-500: #5f5e5e;
+  --color-stone-800: #1b1c1c;
+  --color-stone-900: #1b1c1c;
+  --color-stone-950: #111111;
+
+  --color-gold: #705b39;
+  --color-gold-light: #dec398;
+}
+
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-stone-50 text-stone-900 font-sans antialiased selection:bg-gold/20 dark:bg-stone-950 dark:text-stone-100 dark:selection:bg-gold/30;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}

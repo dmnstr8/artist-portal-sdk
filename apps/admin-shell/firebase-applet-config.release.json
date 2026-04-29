@@ -1,0 +1,9 @@
+{
+  "projectId": "artist-portal-sdk-release",
+  "appId": "1:721150145774:web:8cc6a4c37ee1dee9b36fff",
+  "apiKey": "AIzaSyB_V_TjfoV7_sROANHhUPKocWQJMQIuglU",
+  "authDomain": "artist-portal-sdk-release.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "artist-portal-sdk-release.firebasestorage.app",
+  "messagingSenderId": "721150145774"
+}

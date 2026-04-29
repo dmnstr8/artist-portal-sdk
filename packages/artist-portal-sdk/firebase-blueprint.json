@@ -1,0 +1,279 @@
+{
+  "entities": {
+    "Review": {
+      "title": "Review",
+      "description": "A client review or testimonial.",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "description": "The testimonial text." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text"]
+    },
+    "FAQCategory": {
+      "title": "FAQ Category",
+      "description": "A group of frequently asked questions.",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string" },
+        "order": { "type": "number" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "q": { "type": "string" },
+              "a": { "type": "string" }
+            },
+            "required": ["q", "a"]
+          }
+        }
+      },
+      "required": ["category", "items"]
+    },
+    "ServiceConfig": {
+      "title": "Service Config",
+      "description": "Pricing and service details for a specific language. Collection document ID is the language code (e.g. 'en').",
+      "type": "object",
+      "properties": {
+        "lang": { "type": "string" },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": { "type": "string" },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "desc": { "type": "string" },
+                    "duration": { "type": "string" },
+                    "price": { "type": "string" }
+                  },
+                  "required": ["title", "price"]
+                }
+              }
+            },
+            "required": ["category", "items"]
+          }
+        }
+      },
+      "required": ["lang", "categories"]
+    },
+    "Inquiry": {
+      "title": "Inquiry",
+      "description": "A direct message from a potential client (public create only).",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message"]
+    },
+    "AppSettings": {
+      "title": "App Settings",
+      "description": "Global application configuration. Singleton document at settings/general.",
+      "type": "object",
+      "properties": {
+        "contactEmail": { "type": "string" },
+        "themeDefault": { "type": "string", "enum": ["light", "dark"] },
+        "mediaStorageRoot": { "type": "string", "description": "Firebase Storage path prefix for media files." },
+        "autoLogoutLeavingAdmin": { "type": "boolean" },
+        "showThemeSelector": { "type": "boolean" },
+        "showArtistsPage": { "type": "boolean" },
+        "showProductsPage": { "type": "boolean" },
+        "showReviewsSection": { "type": "boolean" },
+        "showPricingSection": { "type": "boolean" },
+        "roundPricesUpToWholeAmount": { "type": "boolean" },
+        "showVideoSection": { "type": "boolean" },
+        "showGallerySection": { "type": "boolean" },
+        "showFaqPage": { "type": "boolean" },
+        "showContactForm": { "type": "boolean" }
+      },
+      "required": ["contactEmail"]
+    },
+    "VideoLinksHome": {
+      "title": "Video Links Home",
+      "description": "Home page video strip configuration. Singleton document at videolinks/home.",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "Ordered list of YouTube video entries.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "url": { "type": "string", "description": "YouTube video URL." },
+              "label": { "type": "string" }
+            },
+            "required": ["url"]
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["items"]
+    },
+    "GalleryHome": {
+      "title": "Gallery Home",
+      "description": "Homepage portfolio grid configuration. Singleton document at gallery/home.",
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "src": { "type": "string", "description": "Storage path or full URL for the image." },
+              "label": { "type": "string" },
+              "order": { "type": "number" },
+              "enabled": { "type": "boolean" }
+            },
+            "required": ["src", "label", "order"]
+          }
+        }
+      },
+      "required": ["images"]
+    },
+    "ArtistProfile": {
+      "title": "Artist Profile",
+      "description": "An artist / stylist profile card.",
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "instagramHandle": { "type": "string" },
+        "email": { "type": "string" },
+        "bookingWebsiteLink": { "type": "string" },
+        "personalWebsiteLink": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "profilePhotoLink": { "type": "string", "description": "Storage path or full URL." },
+        "specialty": { "type": "string" },
+        "bio": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "order": { "type": "number" }
+      },
+      "required": ["firstName", "lastName"]
+    },
+    "ProductStorefrontCategory": {
+      "title": "Product Storefront Category",
+      "description": "A product category card for the recommended products storefront page.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string" },
+        "title": { "type": "string" },
+        "count": { "type": "number" },
+        "image": { "type": "string", "description": "Storage path or full URL for the category image." },
+        "link": { "type": "string", "description": "External affiliate / shop URL." },
+        "enabled": { "type": "boolean" },
+        "order": { "type": "number" }
+      },
+      "required": ["title", "link"]
+    },
+    "BookingProvidersCatalog": {
+      "title": "Booking Providers Catalog",
+      "description": "Booking provider catalog configuration. Singleton document at bookingproviders/catalog.",
+      "type": "object",
+      "properties": {
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "scriptSrc": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "WidgetsGeneral": {
+      "title": "Widgets General",
+      "description": "External widget configuration (booking, payment, social). Singleton document at widgets/general.",
+      "type": "object",
+      "properties": {
+        "bookingProvider": { "type": "string", "enum": ["salonized", "fresha", "booksy", "other"] },
+        "bookingWidgetCompany": { "type": "string" },
+        "bookingWidgetScriptSrc": { "type": "string" },
+        "showBookingWidget": { "type": "boolean" },
+        "paymentWidgetProvider": { "type": "string", "enum": ["payhip"] },
+        "paymentWidgetProductId": { "type": "string" },
+        "showPaymentWidget": { "type": "boolean" },
+        "taggboxWidgetId": { "type": "string" },
+        "showSocialWidget": { "type": "boolean" }
+      }
+    },
+    "SiteCopyEn": {
+      "title": "Marketing Site Copy (EN)",
+      "description": "All editable marketing copy for the public site. Singleton document at sitecopy/en. Shape mirrors MarketingCopy in artist-portal-sdk. Legal/terms text is not stored here.",
+      "type": "object",
+      "properties": {
+        "locale": { "type": "string", "enum": ["en"] },
+        "brand": {
+          "type": "object",
+          "properties": {
+            "siteName": { "type": "string" }
+          },
+          "required": ["siteName"]
+        }
+      },
+      "required": ["locale", "brand"]
+    }
+  },
+  "firestore": {
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Client testimonials displayed on the homepage."
+    },
+    "/faq/{categoryId}": {
+      "schema": "FAQCategory",
+      "description": "FAQ categories and items for the Education/FAQ page."
+    },
+    "/services/{serviceId}": {
+      "schema": "ServiceConfig",
+      "description": "Service categories and pricing by language code (document ID = lang)."
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": "Inquiry",
+      "description": "Contact form submissions. Public create, admin read/update/delete."
+    },
+    "/settings/{settingsId}": {
+      "schema": "AppSettings",
+      "description": "Global app settings. Active document: settings/general."
+    },
+    "/videolinks/{docId}": {
+      "schema": "VideoLinksHome",
+      "description": "Home page video strip. Active document: videolinks/home."
+    },
+    "/gallery/{docId}": {
+      "schema": "GalleryHome",
+      "description": "Homepage portfolio grid. Active document: gallery/home."
+    },
+    "/artistprofiles/{artistId}": {
+      "schema": "ArtistProfile",
+      "description": "Artist/stylist profile cards displayed on the Artists page."
+    },
+    "/productcategories/{categoryId}": {
+      "schema": "ProductStorefrontCategory",
+      "description": "Product category cards on the Recommended Products page."
+    },
+    "/bookingproviders/{docId}": {
+      "schema": "BookingProvidersCatalog",
+      "description": "Booking provider catalog. Active document: bookingproviders/catalog."
+    },
+    "/widgets/{docId}": {
+      "schema": "WidgetsGeneral",
+      "description": "External widget configuration. Active document: widgets/general."
+    },
+    "/sitecopy/{docId}": {
+      "schema": "SiteCopyEn",
+      "description": "Marketing site copy. Active document: sitecopy/en. Deep-merged over bundled defaults."
+    }
+  }
+}

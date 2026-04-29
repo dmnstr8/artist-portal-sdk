@@ -1,0 +1,104 @@
+/**
+ * Scoped jsoneditor chrome for admin “Display Text On Page”:
+ * transparent surfaces, no outer border, dark text; menu/nav match panel background.
+ */
+
+.marketing-site-copy-jsoneditor .jsoneditor {
+  border: none !important;
+  background: transparent !important;
+  color: #0a0a0a !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-outer {
+  background: transparent !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-tree {
+  background: transparent !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-menu {
+  background: transparent !important;
+  border-bottom: 1px solid rgb(214 211 209 / 0.6) !important; /* stone-200 */
+  color: #0a0a0a !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-menu > button,
+.marketing-site-copy-jsoneditor .jsoneditor-menu > .jsoneditor-modes > button {
+  color: #0a0a0a !important;
+  /* Sprite icons are drawn for a blue bar; invert to read on light/transparent chrome. */
+  filter: brightness(0) saturate(100%) !important;
+  opacity: 0.75 !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-menu > button:hover,
+.marketing-site-copy-jsoneditor .jsoneditor-menu > .jsoneditor-modes > button:hover {
+  background-color: rgb(245 245 244 / 0.9) !important; /* stone-100 */
+  border-color: rgb(214 211 209 / 0.9) !important;
+  opacity: 1 !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-menu > button:focus,
+.marketing-site-copy-jsoneditor .jsoneditor-menu > button:active,
+.marketing-site-copy-jsoneditor .jsoneditor-menu > .jsoneditor-modes > button:focus,
+.marketing-site-copy-jsoneditor .jsoneditor-menu > .jsoneditor-modes > button:active {
+  background-color: rgb(231 229 228 / 0.95) !important; /* stone-200 */
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-menu a {
+  color: #0a0a0a !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-navigation-bar {
+  background: transparent !important;
+  border-bottom: 1px solid rgb(214 211 209 / 0.5) !important;
+  color: #0a0a0a !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-frame {
+  background: transparent !important;
+}
+
+.marketing-site-copy-jsoneditor .jsoneditor-field,
+.marketing-site-copy-jsoneditor .jsoneditor-value,
+.marketing-site-copy-jsoneditor .jsoneditor td,
+.marketing-site-copy-jsoneditor .jsoneditor th,
+.marketing-site-copy-jsoneditor textarea.jsoneditor-text,
+.marketing-site-copy-jsoneditor pre.jsoneditor-preview {
+  color: #0a0a0a !important;
+}
+
+.marketing-site-copy-jsoneditor div.jsoneditor-value.jsoneditor-string,
+.marketing-site-copy-jsoneditor div.jsoneditor-value.jsoneditor-number,
+.marketing-site-copy-jsoneditor div.jsoneditor-value.jsoneditor-boolean,
+.marketing-site-copy-jsoneditor div.jsoneditor-value.jsoneditor-null,
+.marketing-site-copy-jsoneditor div.jsoneditor-value.jsoneditor-url,
+.marketing-site-copy-jsoneditor a.jsoneditor-value.jsoneditor-url {
+  color: #0a0a0a !important;
+}
+
+.marketing-site-copy-jsoneditor textarea.jsoneditor-text {
+  background: transparent !important;
+}
+
+.marketing-site-copy-jsoneditor .ace-jsoneditor,
+.marketing-site-copy-jsoneditor .ace-jsoneditor .ace_scroller {
+  background: transparent !important;
+}
+
+.marketing-site-copy-jsoneditor tr.jsoneditor-highlight,
+.marketing-site-copy-jsoneditor tr.jsoneditor-selected {
+  background-color: rgb(231 229 228 / 0.85) !important; /* stone-200 */
+}
+
+/* Hide tree drag handle for document root’s immediate children (top-level keys / array indices). */
+.marketing-site-copy-jsoneditor tr.msc-jsoneditor-root-key button.jsoneditor-dragarea {
+  pointer-events: none !important;
+  visibility: hidden !important;
+  cursor: default !important;
+}
+
+/* Sort reorders keys globally; keep structure edits in-tree only. */
+.marketing-site-copy-jsoneditor .jsoneditor-menu > button.jsoneditor-sort {
+  display: none !important;
+}

@@ -1,0 +1,61 @@
+{
+  "name": "artist-portal-sdk",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@8.14.1",
+  "scripts": {
+
+    "build:sdk": "pnpm --filter artist-portal-sdk run build",
+    
+    "build:sdk:dev": "pnpm --filter artist-portal-sdk run build && pnpm --filter admin-shell run build" ,
+
+    "build:sdk:release": "pnpm --filter artist-portal-sdk run build && pnpm --filter admin-shell run build:release",
+
+    "dev:sdk": "pnpm --filter admin-shell run dev",
+    "dev:sdk:release": "pnpm --filter admin-shell run dev:release",
+    
+    "build:client:dev": "node -e \"const {spawnSync}=require('node:child_process');const app=process.env.CLIENT_APP||'client-theschneiderhair';const r=spawnSync('pnpm',['--filter',app,'run','build'],{stdio:'inherit',shell:true});process.exit(r.status??1);\"",
+    "build:client:release": "node -e \"const {spawnSync}=require('node:child_process');const app=process.env.CLIENT_APP||'client-theschneiderhair';const r=spawnSync('pnpm',['--filter',app,'run','build:release'],{stdio:'inherit',shell:true});process.exit(r.status??1);\"",
+
+    "dev:client": "node -e \"const {spawnSync}=require('node:child_process');const app=process.env.CLIENT_APP||'client-theschneiderhair';const r=spawnSync('pnpm',['--filter',app,'run','dev'],{stdio:'inherit',shell:true});process.exit(r.status??1);\"",
+    "dev:client:release": "node -e \"const {spawnSync}=require('node:child_process');const app=process.env.CLIENT_APP||'client-theschneiderhair';const r=spawnSync('pnpm',['--filter',app,'run','dev:release'],{stdio:'inherit',shell:true});process.exit(r.status??1);\"",
+
+    
+    
+
+    "clean": "node scripts/clean-docs.mjs",
+    "sync:public-assets": "node scripts/sync-public-assets.mjs",
+    "lint": "pnpm run build:sdk && pnpm --filter client-theschneiderhair run lint",
+    "seed:videolinks": "node scripts/seed-videolinks-firestore.mjs",
+ 
+ 
+    "deploy:rules": "pnpm run deploy:rules:production",
+    "deploy:rules:production": "firebase deploy --only firestore:rules -P production",
+    "deploy:rules:release": "firebase deploy --only firestore:rules -P release",
+    "deploy:hosting:production": "pnpm run build:production && firebase deploy --only hosting -P production",
+    "deploy:hosting:release": "pnpm run build:release && firebase deploy --only hosting -P release",
+    "deploy:live": "pnpm run deploy:hosting:release"
+ 
+ 
+  },
+  "dependencies": {
+    "artist-portal-sdk": "workspace:*",
+    "@tailwindcss/vite": "^4.1.14",
+    "firebase": "^12.12.1",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.14.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "firebase-admin": "^13.8.0",
+    "firebase-tools": "^15.15.0",
+    "tailwindcss": "^4.1.14",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

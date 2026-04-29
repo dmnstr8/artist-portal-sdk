@@ -1,0 +1,1113 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;600;800&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: "Noto Serif", serif;
+  --font-sans: "Manrope", sans-serif;
+  
+  --color-stone-50: #fcf9f8;
+  --color-stone-100: #f6f3f2;
+  --color-stone-200: #f0eded;
+  --color-stone-300: #eae7e7;
+  --color-stone-400: #dcd9d9;
+  --color-stone-500: #5f5e5e;
+  --color-stone-800: #1b1c1c;
+  --color-stone-900: #1b1c1c;
+  
+  --color-gold: #705b39;
+  --color-gold-light: #dec398;
+}
+
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-stone-50 text-stone-900 font-sans antialiased selection:bg-gold/20 dark:bg-stone-950 dark:text-stone-100 dark:selection:bg-gold/30;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.glass {
+  @apply bg-stone-50/80 backdrop-blur-xl border-b border-stone-200/50 dark:bg-stone-950/85 dark:border-stone-800/60;
+}
+
+@media (min-width: 768px) {
+  .glass {
+    @apply bg-stone-50 border-b border-stone-200 dark:bg-stone-950 dark:border-stone-800;
+  }
+}
+
+/*
+  When html has .dark, remap common light-surface utilities so every route
+  picks up a coherent theme without editing hundreds of class strings.
+  Intentionally dark sections (e.g. bg-stone-900 + text-stone-50) are left as-is.
+*/
+@layer components {
+  .dark .bg-stone-50 {
+    @apply bg-stone-950;
+  }
+  .dark .bg-stone-100 {
+    @apply bg-stone-900;
+  }
+  .dark .bg-stone-100\/50 {
+    @apply bg-stone-900/50;
+  }
+  .dark .bg-stone-200 {
+    @apply bg-stone-800;
+  }
+  .dark .bg-stone-200\/50 {
+    @apply bg-stone-800/50;
+  }
+  .dark .bg-white {
+    @apply bg-stone-900;
+  }
+  .dark .border-stone-50 {
+    @apply border-stone-800;
+  }
+  .dark .border-stone-100 {
+    @apply border-stone-800;
+  }
+  .dark .border-stone-200 {
+    @apply border-stone-700;
+  }
+  .dark .border-stone-200\/50 {
+    @apply border-stone-700/50;
+  }
+  .dark .text-stone-900 {
+    @apply text-stone-100;
+  }
+  .dark .text-stone-800 {
+    @apply text-stone-100;
+  }
+  .dark .text-stone-700 {
+    @apply text-stone-200;
+  }
+  .dark .text-stone-600 {
+    @apply text-stone-300;
+  }
+  .dark .text-stone-500 {
+    @apply text-stone-400;
+  }
+  .dark .hover\:bg-stone-50:hover {
+    @apply bg-stone-900;
+  }
+  .dark .hover\:bg-stone-100:hover {
+    @apply bg-stone-800;
+  }
+  .dark .hover\:bg-stone-50\/50:hover {
+    @apply bg-stone-900/50;
+  }
+  .dark .hover\:text-stone-800:hover {
+    @apply text-stone-100;
+  }
+  .dark .hover\:text-stone-900:hover {
+    @apply text-stone-100;
+  }
+  .dark .hover\:text-stone-700:hover {
+    @apply text-stone-200;
+  }
+  .dark .hover\:border-stone-800:hover {
+    @apply border-stone-200;
+  }
+  .dark .hover\:bg-stone-500:hover {
+    @apply bg-stone-400;
+  }
+
+  /* Cookie CTA stays a light chip on the dark banner */
+  .dark .cookie-banner .bg-stone-50 {
+    @apply bg-stone-100 text-stone-900;
+  }
+
+  /* Primary booking control on dark site background */
+  .dark button.booking-trigger.bg-stone-800 {
+    @apply bg-stone-100 text-stone-900 hover:bg-gold hover:text-stone-50;
+  }
+
+  /* Light buttons placed on intentional dark panels (e.g. final CTA) */
+  .dark .on-dark-surface.bg-stone-50 {
+    @apply bg-stone-100 text-stone-900;
+  }
+}
+
+/* Hide the default Salonized floating container if it appears */
+body:not(.salonized-active) #salonized-widget,
+body:not(.salonized-active) .sz-booking-button,
+body:not(.salonized-active) .salonized-booking-button,
+body.menu-open #salonized-widget,
+body.menu-open .sz-booking-button,
+body.menu-open .salonized-booking-button,
+body.menu-open iframe[src*="salonized.com"],
+body.lightbox-open #salonized-widget,
+body.lightbox-open .sz-booking-button,
+body.lightbox-open .salonized-booking-button,
+body.lightbox-open iframe[src*="salonized.com"] {
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+body.salonized-active:not(.menu-open):not(.lightbox-open) #salonized-widget {
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  display: block !important;
+}
+
+/* GDPR Cookie Banner */
+.cookie-banner {
+  @apply fixed inset-0 md:bottom-auto md:top-0 md:left-0 md:right-0 text-stone-50 p-8 md:p-6 z-[200] shadow-2xl border-b border-stone-800 flex flex-col justify-center items-center md:block;
+  background-color: rgba(12, 10, 9, 0.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+@keyframes ctaPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(120, 113, 108, 0.22);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(120, 113, 108, 0);
+  }
+}
+
+.cta-pulse {
+  animation: ctaPulse 2.4s ease-in-out infinite;
+}
+
+.contact-modal-backdrop {
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.fixed.inset-0.bg-stone-900\/40 {
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.admin-inquiry-modal-backdrop {
+  background-color: rgba(2, 6, 23, 0.75) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.admin-global-modal-backdrop {
+  background-color: rgba(2, 6, 23, 0.75) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.portfolio-carousel-edge-fade-left {
+  background: linear-gradient(to right, rgb(245, 245, 244), rgba(245, 245, 244, 0));
+}
+
+.portfolio-carousel-edge-fade-right {
+  background: linear-gradient(to left, rgb(245, 245, 244), rgba(245, 245, 244, 0));
+}
+
+@media (min-width: 768px) {
+  .cookie-banner {
+    background-color: rgba(28, 25, 23, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .admin-inquiries-button {
+    background-color: rgb(12 10 9) !important;
+    color: rgb(231 229 228) !important;
+    border-color: rgb(41 37 36) !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .admin-inquiries-button-active {
+    background-color: #705b39 !important;
+    color: rgb(250 250 249) !important;
+    border-color: #705b39 !important;
+  }
+
+  .admin-sidebar-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .admin-sidebar-controls > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group {
+    width: auto;
+    min-width: 13.5rem;
+    margin-top: 0.15rem;
+  }
+
+  .admin-sidebar-control-group > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group > div[role='menu'],
+  .admin-sidebar-control-group > div {
+    min-width: 13.5rem;
+  }
+
+  .admin-cloud-led {
+    width: 0.82rem !important;
+    height: 0.82rem !important;
+  }
+
+  .admin-cloud-led-mini {
+    width: 0.45rem !important;
+    height: 0.45rem !important;
+  }
+
+  .admin-cloud-led-live {
+    background-color: rgb(34 197 94) !important;
+  }
+
+  .admin-cloud-led-local {
+    background-color: rgb(245 158 11) !important;
+  }
+
+  .on-camera-section {
+    background-color: rgb(240, 237, 237) !important;
+  }
+
+  .on-camera-video-card {
+    background-color: rgb(214, 211, 209) !important;
+    border-color: rgba(168, 162, 158, 0.55) !important;
+  }
+
+  .tablet-scroll-image {
+    filter: grayscale(100%) !important;
+  }
+
+  .tablet-scroll-image.tablet-scroll-image-in-view {
+    filter: grayscale(0%) !important;
+  }
+
+  .recommended-products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.9rem !important;
+  }
+
+  .recommended-product-card {
+    box-shadow: 0 14px 28px rgba(28, 25, 23, 0.2) !important;
+  }
+
+  .admin-tablet-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .admin-tablet-card {
+    padding: 0.75rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .admin-tablet-card h3 {
+    font-size: 0.92rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  .admin-tablet-card p {
+    font-size: 0.65rem !important;
+    line-height: 1rem !important;
+  }
+
+  .location-tablet-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: start;
+  }
+
+  .location-tablet-map {
+    margin-top: calc(7.5rem + 2cm);
+  }
+
+  .location-tablet-map-frame {
+    width: 100%;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+  }
+
+  .portfolio-gallery-image {
+    filter: grayscale(100%) !important;
+  }
+
+  .group:hover .portfolio-gallery-image,
+  .group:focus-within .portfolio-gallery-image {
+    filter: grayscale(0%) !important;
+  }
+
+  .reviews-quote-text {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+    padding-left: calc(1cm + 2.25rem) !important;
+    padding-right: calc(1cm + 2.25rem) !important;
+  }
+
+  .reviews-carousel-shell {
+    padding-left: 1cm !important;
+    padding-right: 1cm !important;
+  }
+
+  .reviews-nav-prev {
+    left: 0 !important;
+    padding: 1cm !important;
+  }
+
+  .reviews-nav-next {
+    right: 0 !important;
+    padding: 1cm !important;
+  }
+
+  .reviews-nav-prev .reviews-nav-icon {
+    transform: rotate(90deg) !important;
+  }
+
+  .reviews-nav-next .reviews-nav-icon {
+    transform: rotate(-90deg) !important;
+  }
+
+  .reviews-indicators {
+    position: relative;
+    z-index: 30;
+  }
+
+  .reviews-indicator-dot {
+    position: relative;
+    z-index: 31;
+  }
+
+  .gallery-lightbox-overlay {
+    background-color: #000 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .gallery-lightbox-edge-fade {
+    display: block;
+  }
+
+  .gallery-lightbox-edge-fade-left {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0));
+  }
+
+  .gallery-lightbox-edge-fade-right {
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0));
+  }
+
+  .glass {
+    background-color: rgba(252, 249, 248, 0.8) !important;
+    border-bottom-color: rgba(240, 237, 237, 0.5) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .dark .glass {
+    background-color: rgba(2, 6, 23, 0.85) !important;
+    border-bottom-color: rgba(41, 37, 36, 0.6) !important;
+  }
+
+  .artist-transparent-tablet {
+    right: 10vw;
+    transform: translateY(-50%) scaleX(-1) scale(2.5);
+    transform-origin: center center;
+  }
+
+  .hero-photo-tablet,
+  .secondary-photo-tablet {
+    object-fit: contain !important;
+    object-position: center top !important;
+    background-color: transparent;
+    transform: none !important;
+    border-radius: 1rem;
+    filter: grayscale(100%) !important;
+  }
+
+  .hero-photo-tablet.tablet-scroll-color,
+  .secondary-photo-tablet.tablet-scroll-color {
+    filter: grayscale(0%) !important;
+  }
+
+  .hero-photo-frame-tablet,
+  .about-artist-tablet-image,
+  .about-artist-tablet-below-image {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    height: 4in !important;
+    overflow: hidden !important;
+    border-radius: 1rem !important;
+    -webkit-clip-path: inset(0 round 1rem);
+    clip-path: inset(0 round 1rem);
+  }
+
+  .hero-photo-frame-tablet .hero-photo-tablet,
+  .about-artist-tablet-image .hero-photo-tablet,
+  .about-artist-tablet-below-image .hero-photo-tablet {
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 4in !important;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: inherit;
+    display: block;
+  }
+
+  .about-artist-tablet-copy > .space-y-6 > h2 {
+    margin-bottom: 1cm !important;
+  }
+
+  .about-artist-tablet-copy > .space-y-6 > p {
+    margin-bottom: 1cm !important;
+  }
+
+  .about-artist-tablet-image,
+  .about-artist-tablet-below-image {
+    margin-bottom: 1cm !important;
+  }
+
+  .about-artist-tablet-prose p {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: portrait) {
+  .hero-tablet-cta-row {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .hero-tablet-section .booking-trigger {
+    width: 33.333vw !important;
+    max-width: 33.333vw !important;
+  }
+
+  .about-artist-tablet-grid {
+    display: block;
+  }
+
+  .about-artist-tablet-image {
+    display: none !important;
+  }
+
+  .about-artist-tablet-below-image {
+    display: block !important;
+    height: 4in !important;
+    margin-top: 1.5rem;
+    margin-bottom: 1cm !important;
+    overflow: hidden;
+  }
+
+  .about-artist-tablet-below-image .hero-photo-tablet {
+    transform: none !important;
+  }
+
+  .about-artist-tablet-copy,
+  .about-artist-tablet-prose,
+  .about-artist-tablet-card {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .about-artist-tablet-prose {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-artist-tablet-prose p {
+    margin: 0;
+    line-height: 1.75;
+  }
+
+  .about-artist-title-break {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: landscape) {
+  .artists-tablet-columns {
+    columns: 2 !important;
+    column-gap: 1.5rem !important;
+  }
+
+  .recommended-product-card {
+    width: 70% !important;
+    justify-self: center !important;
+  }
+
+  .location-tablet-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: start !important;
+  }
+
+  .location-tablet-copy {
+    order: 1 !important;
+  }
+
+  .location-tablet-map {
+    order: 2 !important;
+    margin-top: 0 !important;
+    justify-self: stretch !important;
+    align-self: end !important;
+    width: 75% !important;
+    max-width: 75% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .location-tablet-map-frame {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .gallery-lightbox-media-shell {
+    max-height: 68vh !important;
+  }
+
+  .gallery-lightbox-media {
+    max-height: 62vh !important;
+    width: auto !important;
+  }
+
+  .hero-tablet-section {
+    overflow: visible !important;
+  }
+
+  .artist-transparent-tablet {
+    right: 8vw !important;
+    left: auto !important;
+    width: 42vw !important;
+    max-width: 210px !important;
+    transform: translateY(-50%) scaleX(-1) scale(2.8) !important;
+    transform-origin: center center !important;
+  }
+
+  .hero-tablet-cta-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .hero-tablet-section .booking-trigger {
+    width: 33.333vw !important;
+    max-width: 33.333vw !important;
+    min-width: 33.333vw !important;
+    margin-left: 0 !important;
+    align-self: flex-start !important;
+  }
+
+  .hero-photo-frame-tablet {
+    height: 4in !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+    border-radius: 1rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    -webkit-clip-path: inset(0 round 1rem);
+    clip-path: inset(0 round 1rem);
+  }
+
+  .hero-photo-frame-tablet .hero-photo-tablet {
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 4in !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius: inherit !important;
+    display: block !important;
+  }
+
+  .hero-tablet-explore-link {
+    margin-left: 0.75rem !important;
+  }
+
+  .about-artist-tablet-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: center;
+  }
+
+  .about-artist-tablet-image {
+    display: block !important;
+    order: 2;
+  }
+
+  .about-artist-tablet-below-image {
+    display: none !important;
+  }
+
+  .about-artist-tablet-copy {
+    order: 1;
+  }
+
+  .about-artist-tablet-copy,
+  .about-artist-tablet-prose,
+  .about-artist-tablet-card {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .about-artist-tablet-prose {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-artist-tablet-prose p {
+    margin: 0;
+    line-height: 1.75;
+  }
+
+  .about-artist-title-break {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) and (orientation: landscape) {
+  .admin-cloud-led,
+  .admin-cloud-led-mini {
+    border-color: transparent !important;
+    border-width: 0 !important;
+    background-clip: padding-box !important;
+  }
+
+  .admin-cloud-led-live {
+    background-color: rgb(34 197 94) !important;
+  }
+
+  .admin-cloud-led-local {
+    background-color: rgb(245 158 11) !important;
+  }
+
+  .admin-inquiries-button {
+    background-color: rgb(12 10 9) !important;
+    color: rgb(231 229 228) !important;
+    border-color: rgb(41 37 36) !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .admin-inquiries-button-active {
+    background-color: #705b39 !important;
+    color: rgb(250 250 249) !important;
+    border-color: #705b39 !important;
+  }
+
+  .admin-sidebar-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .admin-sidebar-controls > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group {
+    width: auto;
+    min-width: 13.5rem;
+    margin-top: 0.15rem;
+  }
+
+  .admin-sidebar-control-group > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group > div[role='menu'],
+  .admin-sidebar-control-group > div {
+    min-width: 13.5rem;
+  }
+
+  .tablet-scroll-image {
+    filter: grayscale(100%) !important;
+    transition: filter 1000ms ease-out !important;
+  }
+
+  .tablet-scroll-image.tablet-scroll-image-in-view {
+    filter: grayscale(0%) !important;
+  }
+
+  .recommended-products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.9rem !important;
+  }
+
+  .recommended-product-card {
+    width: 70% !important;
+    justify-self: center !important;
+  }
+
+  .artists-tablet-columns {
+    columns: 2 !important;
+    column-gap: 1.5rem !important;
+  }
+
+  .location-tablet-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: start !important;
+  }
+
+  .location-tablet-copy {
+    order: 1 !important;
+  }
+
+  .location-tablet-map {
+    order: 2 !important;
+    margin-top: 0 !important;
+    justify-self: stretch !important;
+    align-self: end !important;
+    width: 75% !important;
+    max-width: 75% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .location-tablet-map-frame {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .reviews-section {
+    background-color: rgb(28 25 23) !important;
+    background-image: none !important;
+  }
+
+  .reviews-bg-glow {
+    display: none !important;
+  }
+
+  .final-cta-section {
+    background-color: rgb(28 25 23) !important;
+    background-image: none !important;
+  }
+
+  .final-cta-bg-glow {
+    display: none !important;
+  }
+
+  .final-cta-heading {
+    font-size: 4rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .reviews-quote-text {
+    font-size: 3.125rem !important;
+    line-height: 1.2 !important;
+    padding-left: calc(1cm + 2.25rem) !important;
+    padding-right: calc(1cm + 2.25rem) !important;
+  }
+
+  .reviews-indicators {
+    position: relative !important;
+    z-index: 40 !important;
+  }
+
+  .reviews-indicator-dot {
+    position: relative !important;
+    z-index: 41 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .reviews-indicator-dot-inactive {
+    background-color: rgb(68 64 60) !important;
+  }
+
+  .reviews-indicator-dot-active {
+    background-color: rgb(227 174 87) !important;
+  }
+
+  .gallery-lightbox-overlay {
+    background-color: #000 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .gallery-lightbox-media-shell {
+    max-height: 68vh !important;
+  }
+
+  .gallery-lightbox-media {
+    max-height: 62vh !important;
+    width: auto !important;
+  }
+
+  .hero-photo-tablet,
+  .secondary-photo-tablet {
+    filter: grayscale(100%) !important;
+    transition: filter 1000ms ease-out !important;
+  }
+
+  .hero-photo-tablet.tablet-scroll-color,
+  .secondary-photo-tablet.tablet-scroll-color {
+    filter: grayscale(0%) !important;
+  }
+
+  .portfolio-gallery-image {
+    filter: grayscale(100%) !important;
+    transition: filter 800ms ease-out !important;
+  }
+
+  .group:hover .portfolio-gallery-image,
+  .group:focus-within .portfolio-gallery-image {
+    filter: grayscale(0%) !important;
+  }
+
+  .hero-tablet-section {
+    overflow: visible !important;
+  }
+
+  .artist-transparent-tablet {
+    display: block !important;
+    right: 8vw !important;
+    left: auto !important;
+    width: 42vw !important;
+    max-width: 210px !important;
+    transform: translateY(-50%) scaleX(-1) scale(2.8) !important;
+    transform-origin: center center !important;
+  }
+
+  .hero-tablet-cta-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .hero-tablet-section .booking-trigger {
+    width: 33.333vw !important;
+    max-width: 33.333vw !important;
+    min-width: 33.333vw !important;
+    flex: 0 0 33.333vw !important;
+    margin-left: 0 !important;
+    align-self: flex-start !important;
+  }
+
+  .hero-photo-frame-tablet {
+    height: 4in !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+    border-radius: 1rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    -webkit-clip-path: inset(0 round 1rem);
+    clip-path: inset(0 round 1rem);
+  }
+
+  .hero-photo-frame-tablet .hero-photo-tablet {
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 4in !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius: inherit !important;
+    display: block !important;
+  }
+
+  .about-artist-tablet-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: center;
+  }
+
+  .about-artist-tablet-image {
+    display: block !important;
+    order: 2;
+  }
+
+  .about-artist-tablet-copy {
+    order: 1;
+  }
+
+  .about-artist-tablet-below-image {
+    display: none !important;
+  }
+
+  .nav-tablet-links {
+    gap: 0.2rem !important;
+    max-width: 78vw !important;
+  }
+
+  .nav-tablet-link-item {
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: landscape) {
+  .nav-tablet-links {
+    gap: 0.2rem !important;
+    max-width: 78vw !important;
+  }
+
+  .nav-tablet-link-item {
+    padding-left: 0.45rem !important;
+    padding-right: 0.45rem !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1400px) and (orientation: landscape) {
+  .admin-tablet-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
+  }
+
+  .admin-tablet-card {
+    width: 75% !important;
+    max-width: 75% !important;
+    min-width: 75% !important;
+    justify-self: center !important;
+    padding: 0.35rem !important;
+    border-radius: 0.6rem !important;
+  }
+
+  .admin-tablet-card h3 {
+    font-size: 0.6rem !important;
+    line-height: 0.9rem !important;
+  }
+
+  .admin-tablet-card p {
+    font-size: 0.5rem !important;
+    line-height: 0.75rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .reviews-section {
+    background-color: rgb(28 25 23) !important;
+    background-image: none !important;
+  }
+
+  .reviews-bg-glow {
+    display: none !important;
+  }
+
+  .recommended-products-grid {
+    justify-items: center;
+  }
+
+  .recommended-product-card {
+    width: 67% !important;
+  }
+
+  .artists-card-shell {
+    height: 154px !important;
+  }
+
+  .artists-card-shell.artists-card-shell--has-bio {
+    height: calc(266px + 0.7cm) !important;
+  }
+
+  .artists-card {
+    height: 154px !important;
+    min-height: 154px !important;
+    max-height: 154px !important;
+  }
+
+  .artists-card.artists-card--has-bio {
+    min-height: calc(266px + 0.7cm) !important;
+    max-height: calc(266px + 0.7cm) !important;
+  }
+
+  .artists-card-photo {
+    width: 5.6rem !important;
+    height: 154px !important;
+  }
+
+  .artists-card-content {
+    height: 154px !important;
+    padding: 0.875rem !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .site-nav-bar {
+    min-height: 3rem !important;
+  }
+
+  .site-nav-inner {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .nav-tablet-links {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .reviews-section {
+    background-color: rgb(28 25 23) !important;
+    background-image: none !important;
+  }
+
+  .reviews-bg-glow {
+    display: none !important;
+  }
+
+  .final-cta-section {
+    background-color: rgb(28 25 23) !important;
+    background-image: none !important;
+  }
+
+  .final-cta-bg-glow {
+    display: none !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+section[id], div[id] {
+  scroll-margin-top: 120px;
+}
+

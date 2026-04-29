@@ -1,0 +1,155 @@
+[
+  {
+    "category": "Bleach Fundamentals",
+    "items": [
+      {
+        "q": "What is bleach actually doing to the hair?",
+        "a": "Bleach oxidizes and breaks down melanin inside the hair, removing pigment while also affecting the hair’s internal structure."
+      },
+      {
+        "q": "Why is bleach often misunderstood?",
+        "a": "Many stylists treat it as a simple lightener, but it’s a complex chemical process that affects pigment, protein, and moisture balance."
+      },
+      {
+        "q": "Why can bleach results be unpredictable?",
+        "a": "Results depend on hair history, porosity, product choice, developer strength, and application technique."
+      }
+    ]
+  },
+  {
+    "category": "Chemistry & Process",
+    "items": [
+      {
+        "q": "What happens in the bleach mixture?",
+        "a": "When mixed, persulfates and hydrogen peroxide create reactive oxygen species that break down pigment molecules."
+      },
+      {
+        "q": "How long is bleach active?",
+        "a": "Bleach is most effective for about 20–45 minutes depending on the formula, after which its strength declines."
+      },
+      {
+        "q": "Why should bleach not dry out?",
+        "a": "Once bleach dries, it stops processing effectively and can lead to uneven results."
+      }
+    ]
+  },
+  {
+    "category": "Hair Structure & Damage",
+    "items": [
+      {
+        "q": "How does bleach affect hair structure?",
+        "a": "It lifts the cuticle, penetrates the cortex, breaks pigment, and weakens protein bonds, reducing strength and elasticity."
+      },
+      {
+        "q": "Why does hair feel dry after bleaching?",
+        "a": "Bleach removes natural lipids and compromises the hair’s moisture barrier, making it feel dry and porous."
+      },
+      {
+        "q": "Can bleach damage be prevented?",
+        "a": "Damage can be minimized through correct product choice, controlled processing, and proper aftercare."
+      }
+    ]
+  },
+  {
+    "category": "pH & Control",
+    "items": [
+      {
+        "q": "Why is pH important in bleaching?",
+        "a": "pH controls how much the cuticle opens and how aggressively the bleach works."
+      },
+      {
+        "q": "What happens with high pH exposure?",
+        "a": "High pH increases lift but also increases damage and porosity if left unchecked."
+      },
+      {
+        "q": "How do you control pH impact?",
+        "a": "By managing processing time, using appropriate formulas, and rebalancing the hair after the service."
+      }
+    ]
+  },
+  {
+    "category": "Types of Bleach",
+    "items": [
+      {
+        "q": "What are the main types of bleach?",
+        "a": "Powder bleach, cream bleach, and clay bleach—each designed for different techniques and control levels."
+      },
+      {
+        "q": "When should clay bleach be used?",
+        "a": "For freehand techniques like balayage, where controlled lift and minimal swelling are important."
+      },
+      {
+        "q": "What’s the difference between 7-level and 9-level lift bleach?",
+        "a": "7-level is gentler and better for scalp work; 9-level is stronger and better for higher lift but riskier."
+      }
+    ]
+  },
+  {
+    "category": "Developers & Strength",
+    "items": [
+      {
+        "q": "What does developer volume control?",
+        "a": "Developer controls the speed and intensity of the lightening process."
+      },
+      {
+        "q": "When should low-volume developer be used?",
+        "a": "For more controlled lift, fragile hair, or when precision is more important than speed."
+      },
+      {
+        "q": "Why not always use stronger developer?",
+        "a": "Higher volumes increase speed but also increase the risk of damage and loss of control."
+      }
+    ]
+  },
+  {
+    "category": "Consultation",
+    "items": [
+      {
+        "q": "Why is consultation critical before bleaching?",
+        "a": "It helps identify hair history, risks, expectations, and whether the goal is achievable safely."
+      },
+      {
+        "q": "What should be asked during a consultation?",
+        "a": "Hair history, lifestyle, maintenance expectations, and desired results."
+      },
+      {
+        "q": "When should you refuse a bleach service?",
+        "a": "When hair is too compromised, expectations are unrealistic, or proper aftercare is unlikely."
+      }
+    ]
+  },
+  {
+    "category": "Expectations & Results",
+    "items": [
+      {
+        "q": "Why is managing expectations important?",
+        "a": "It prevents disappointment and ensures the client understands the process and limitations."
+      },
+      {
+        "q": "Can every client go platinum in one session?",
+        "a": "No, many transformations require multiple sessions to maintain hair integrity."
+      },
+      {
+        "q": "How should results be communicated?",
+        "a": "Frame it as a journey and explain realistic timelines and outcomes clearly."
+      }
+    ]
+  },
+  {
+    "category": "Aftercare",
+    "items": [
+      {
+        "q": "Why is aftercare essential?",
+        "a": "Bleached hair requires ongoing care to maintain strength, tone, and overall health."
+      },
+      {
+        "q": "What happens without proper aftercare?",
+        "a": "Hair can become dry, break, lose tone quickly, and degrade in quality."
+      },
+      {
+        "q": "What should clients focus on post-service?",
+        "a": "Hydration, bond repair, gentle cleansing, and regular maintenance."
+      }
+    ]
+  }
+]

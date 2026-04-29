@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;600;800&display=swap');
+@import 'tailwindcss';
+
+/*
+  Ensure Tailwind v4 scans SDK admin source files even when this package is
+  consumed from another app workspace root.
+*/
+@source "./**/*.{ts,tsx,js,jsx}";
+@source "../**/*.{ts,tsx,js,jsx}";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: 'Noto Serif', serif;
+  --font-sans: 'Manrope', sans-serif;
+
+  --color-stone-50: #fcf9f8;
+  --color-stone-100: #f6f3f2;
+  --color-stone-200: #f0eded;
+  --color-stone-300: #eae7e7;
+  --color-stone-400: #dcd9d9;
+  --color-stone-500: #5f5e5e;
+  --color-stone-800: #1b1c1c;
+  --color-stone-900: #1b1c1c;
+  --color-stone-950: #111111;
+
+  --color-gold: #705b39;
+  --color-gold-light: #dec398;
+}
+
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-stone-50 text-stone-900 font-sans antialiased selection:bg-gold/20 dark:bg-stone-950 dark:text-stone-100 dark:selection:bg-gold/30;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+.admin-inquiry-modal-backdrop {
+  background-color: rgba(2, 6, 23, 0.75) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.admin-global-modal-backdrop {
+  background-color: rgba(2, 6, 23, 0.75) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .admin-inquiries-button {
+    background-color: rgb(12 10 9) !important;
+    color: rgb(231 229 228) !important;
+    border-color: rgb(41 37 36) !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .admin-inquiries-button-active {
+    background-color: #705b39 !important;
+    color: rgb(250 250 249) !important;
+    border-color: #705b39 !important;
+  }
+
+  .admin-sidebar-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .admin-sidebar-controls > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group {
+    width: auto;
+    min-width: 13.5rem;
+    margin-top: 0.15rem;
+  }
+
+  .admin-sidebar-control-group > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group > div[role='menu'],
+  .admin-sidebar-control-group > div {
+    min-width: 13.5rem;
+  }
+
+  .admin-cloud-led {
+    width: 0.82rem !important;
+    height: 0.82rem !important;
+  }
+
+  .admin-cloud-led-mini {
+    width: 0.45rem !important;
+    height: 0.45rem !important;
+  }
+
+  .admin-cloud-led-live {
+    background-color: rgb(34 197 94) !important;
+  }
+
+  .admin-cloud-led-local {
+    background-color: rgb(245 158 11) !important;
+  }
+
+  .admin-tablet-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .admin-tablet-card {
+    padding: 0.75rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .admin-tablet-card h3 {
+    font-size: 0.92rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  .admin-tablet-card p {
+    font-size: 0.65rem !important;
+    line-height: 1rem !important;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) and (orientation: landscape) {
+  .admin-cloud-led,
+  .admin-cloud-led-mini {
+    border-color: transparent !important;
+    border-width: 0 !important;
+    background-clip: padding-box !important;
+  }
+
+  .admin-cloud-led-live {
+    background-color: rgb(34 197 94) !important;
+  }
+
+  .admin-cloud-led-local {
+    background-color: rgb(245 158 11) !important;
+  }
+
+  .admin-inquiries-button {
+    background-color: rgb(12 10 9) !important;
+    color: rgb(231 229 228) !important;
+    border-color: rgb(41 37 36) !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .admin-inquiries-button-active {
+    background-color: #705b39 !important;
+    color: rgb(250 250 249) !important;
+    border-color: #705b39 !important;
+  }
+
+  .admin-sidebar-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .admin-sidebar-controls > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group {
+    width: auto;
+    min-width: 13.5rem;
+    margin-top: 0.15rem;
+  }
+
+  .admin-sidebar-control-group > button {
+    width: auto !important;
+    min-width: 13.5rem !important;
+  }
+
+  .admin-sidebar-control-group > div[role='menu'],
+  .admin-sidebar-control-group > div {
+    min-width: 13.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1400px) and (orientation: landscape) {
+  .admin-tablet-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
+  }
+
+  .admin-tablet-card {
+    width: 75% !important;
+    max-width: 75% !important;
+    min-width: 75% !important;
+    justify-self: center !important;
+    padding: 0.35rem !important;
+    border-radius: 0.6rem !important;
+  }
+
+  .admin-tablet-card h3 {
+    font-size: 0.6rem !important;
+    line-height: 0.9rem !important;
+  }
+
+  .admin-tablet-card p {
+    font-size: 0.5rem !important;
+    line-height: 0.75rem !important;
+  }
+}

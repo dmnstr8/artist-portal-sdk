@@ -1,0 +1,11 @@
+{
+  "bookingProvider": "salonized",
+  "bookingWidgetCompany": "m2yzkzSecfyaghBe93MNZGuc",
+  "bookingWidgetScriptSrc": "https://static-widget.salonized.com/loader.js",
+  "showBookingWidget": true,
+  "paymentWidgetProvider": "payhip",
+  "paymentWidgetProductId": "4GCTc",
+  "showPaymentWidget": true,
+  "taggboxWidgetId": "323381",
+  "showSocialWidget": true
+}

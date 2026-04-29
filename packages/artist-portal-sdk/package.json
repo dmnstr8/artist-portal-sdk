@@ -1,0 +1,60 @@
+{
+  "name": "artist-portal-sdk",
+  "version": "0.1.0",
+  "description": "Shared Firebase client factory, Firestore content helpers, and optional admin UI for artist marketing sites and portals.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "sideEffects": [
+    "**/*.css",
+    "./src/admin/**/*.tsx"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*.css": "./dist/*.css",
+    "./admin": {
+      "types": "./dist/admin/index.d.ts",
+      "import": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./admin/*.css": "./dist/admin/*.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-css.mjs",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "peerDependencies": {
+    "firebase": "^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0",
+    "jsoneditor": "^10.0.0",
+    "jszip": "^3.10.0",
+    "lucide-react": "^0.500.0",
+    "motion": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/jsoneditor": "^9.9.6",
+    "firebase": "^12.12.1",
+    "jsoneditor": "^10.4.3",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.14.1",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

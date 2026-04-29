@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      // Admin access is granted via either:
+      // 1) Auth custom claim: { admin: true }
+      // 2) Cloud document: /admins/{uid}
+      // 3) Approved admin email allowlist (for environments without claims/admin docs)
+      return isSignedIn() && (
+        request.auth.token.admin == true ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email in [
+          "diggs.it.accnt@gmail.com"
+        ]
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Reviews
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(reviewId);
+    }
+
+    // FAQ
+    match /faq/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(categoryId);
+    }
+
+    // Services
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(serviceId);
+    }
+
+    // Inquiries
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin() && isValidId(inquiryId);
+    }
+
+    // Settings
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(settingsId);
+    }
+
+    // Home page video strip (document videolinks/home)
+    match /videolinks/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(docId);
+    }
+
+    // Homepage portfolio (document gallery/home)
+    match /gallery/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(docId);
+    }
+
+    // Artist profiles
+    match /artistprofiles/{artistId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(artistId);
+    }
+
+    // Recommended products / storefront category cards
+    match /productcategories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(categoryId);
+    }
+
+    // Booking provider catalog (document bookingproviders/catalog)
+    match /bookingproviders/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(docId);
+    }
+
+    // External widgets config (document widgets/general)
+    match /widgets/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(docId);
+    }
+
+    // Marketing site copy (e.g. document sitecopy/en) — legal/terms stay in repo JSON only
+    match /sitecopy/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(docId);
+    }
+  }
+}

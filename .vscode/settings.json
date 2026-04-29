@@ -1,0 +1,5 @@
+{
+  "terminal.integrated.env.windows": {
+    "CLIENT_APP": "client-theschneiderhair"
+  }
+}

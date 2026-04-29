@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "theschneiderhair-dev",
+    "production": "theschneiderhair-dev",
+    "release": "theschneiderhair-59173"
+  }
+}
