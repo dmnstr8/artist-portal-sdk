@@ -12,6 +12,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -23,5 +25,3 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @dmnstr8/artist-portal-sdk run build
       - run: pnpm -r --filter @dmnstr8/artist-portal-sdk publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
