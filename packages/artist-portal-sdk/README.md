@@ -1,6 +1,6 @@
 # artist-portal-sdk
 
-Shared **Firebase client bootstrap** for artist sites: each client supplies their own Firebase web config (same JSON fields as `firebase-applet-config.*.json`); you keep one **document layout** across projects.
+Reusable SDK for artist portal apps: Firebase client bootstrap, shared Firestore content reads, fallback helpers, and shared domain types.
 
 ## Install
 
@@ -8,7 +8,15 @@ Shared **Firebase client bootstrap** for artist sites: each client supplies thei
 pnpm add artist-portal-sdk firebase
 ```
 
-## Usage (any bundler / React app)
+## What This Package Provides
+
+- `createArtistPortalClients(config)` to create `db`, `auth`, and `storage`
+- `registerPortalFirebase(bundle)` / `getPortalFirebase()` global registration for helpers that read from the active portal instance
+- Firestore read helpers for common collections/docs (`reviews`, `faq`, `services`, `settings`, `widgets`, `videolinks`, `artistprofiles`, `productcategories`, `gallery`, `sitecopy`)
+- Shared domain types used by both public and admin surfaces
+- Optional admin UI entrypoint via `artist-portal-sdk/admin`
+
+## Basic Usage
 
 ```ts
 import { createArtistPortalClients, type ArtistPortalFirebaseConfig } from 'artist-portal-sdk';
@@ -28,33 +36,11 @@ const { db, auth, storage } = createArtistPortalClients(config);
 // Use `db` with the Firebase modular SDK (collection, doc, getDoc, …).
 ```
 
-Use **separate config objects** for “production” vs “release” projects at build time or runtime; this package does not load env files.
+Use separate config objects for production/release environments in your host app. This package does not load env files directly.
 
-## Vite (this monorepo)
+## Registering the Global Portal Bundle
 
-`resolveFirebaseTarget(() => import.meta.env)` plus your two JSON configs still pick which `ArtistPortalFirebaseConfig` to pass into `createArtistPortalClients`.
-
-## Firestore reads (shared layout)
-
-After `createArtistPortalClients`, use the modular Firestore API with the returned `db`, or call the bundled helpers (same collection names as the public site):
-
-- `readReviewsFromFirestore(db)`
-- `readFaqFromFirestore(db)`
-- `readServicesEnFromFirestore(db)`
-- `readSettingsGeneralFromFirestore(db, localDefaults)`
-- `readWidgetsGeneralFromFirestore(db, localDefaults)`
-- `readVideoLinksHomeFromFirestore(db)`
-- `readArtistProfilesFromFirestore(db)`
-- `readProductCategoriesFromFirestore(db)`
-- `readGalleryHomeFromFirestore(db)` — returns normalized `GalleryHomeData`
-- `readSiteCopyEnDocumentFromFirestore(db)` — raw doc for marketing merge
-- `stripFirestoreServerFields`, `normalizeGalleryHomeData`, video / storefront helpers
-
-Each read returns **`null`** when the doc/collection is missing or the read fails; your app supplies local JSON fallbacks the same way this monorepo does.
-
-## Portal registration (marketing site + admin)
-
-`getReviewsWithFallback`, `getSettingsWithFallback`, and the other **merged Firestore/local** helpers in this package read Firestore via `getPortalFirebase().db`. After you call `createArtistPortalClients`, register the same instances once (this repo does it from `src/lib/firebase.ts`):
+If you use helper functions that depend on the portal singleton, register once at app startup:
 
 ```ts
 import { createArtistPortalClients, registerPortalFirebase } from 'artist-portal-sdk';
@@ -70,10 +56,35 @@ registerPortalFirebase({
 });
 ```
 
-## Admin UI (optional subpath)
+## Firestore Read Helpers
 
-The artist portal **admin dashboard** and related UI live in this package under **`artist-portal-sdk/admin`** (lazy-loadable default export). Peer dependencies include `react`, `react-dom`, `react-router-dom`, `motion`, `lucide-react`, `jsoneditor`, and `jszip` when you use the admin entry.
+You can query Firestore directly using `db`, or use built-in helpers such as:
+
+- `readReviewsFromFirestore(db)`
+- `readFaqFromFirestore(db)`
+- `readServicesEnFromFirestore(db)`
+- `readSettingsGeneralFromFirestore(db, localDefaults)`
+- `readWidgetsGeneralFromFirestore(db, localDefaults)`
+- `readVideoLinksHomeFromFirestore(db)`
+- `readArtistProfilesFromFirestore(db)`
+- `readProductCategoriesFromFirestore(db)`
+- `readGalleryHomeFromFirestore(db)` — returns normalized `GalleryHomeData`
+- `readSiteCopyEnDocumentFromFirestore(db)` — raw doc for marketing merge
+- `stripFirestoreServerFields`, `normalizeGalleryHomeData`, video / storefront helpers
+
+Most reads return `null` when data is missing or unreadable so host apps can apply local fallback content.
+
+## Optional Admin UI Entry
+
+The admin dashboard UI is exposed from `artist-portal-sdk/admin` as a separate entrypoint so consumers can lazy-load it and keep public bundles smaller.
 
 ## Publishing
 
-From `packages/artist-portal-sdk`: `pnpm run build`, then `npm publish` (or your private registry). Consumers must use a compatible `firebase` peer version.
+From `packages/artist-portal-sdk`:
+
+```bash
+pnpm run build
+npm publish
+```
+
+Ensure consumers use a compatible `firebase` version.

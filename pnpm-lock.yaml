@@ -33,6 +33,9 @@ importers:
         specifier: ^7.14.1
         version: 7.14.2(react-dom@19.2.5)(react@19.2.5)
     devDependencies:
+      '@tailwindcss/oxide-win32-x64-msvc':
+        specifier: ^4.2.4
+        version: 4.2.4
       '@types/node':
         specifier: ^22.14.0
         version: 22.19.17
@@ -55,7 +58,50 @@ importers:
         specifier: ^6.2.0
         version: 6.4.2(@types/node@22.19.17)
 
-  apps/admin-shell:
+  apps/clientTheSchneiderHair:
+    dependencies:
+      '@tailwindcss/vite':
+        specifier: ^4.1.14
+        version: 4.2.4(vite@6.4.2)
+      artist-portal-sdk:
+        specifier: workspace:*
+        version: link:../../packages/artist-portal-sdk
+      firebase:
+        specifier: ^12.12.1
+        version: 12.12.1
+      lucide-react:
+        specifier: ^0.546.0
+        version: 0.546.0(react@19.2.5)
+      motion:
+        specifier: ^12.23.24
+        version: 12.38.0(react-dom@19.2.5)(react@19.2.5)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.5
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.5(react@19.2.5)
+      react-router-dom:
+        specifier: ^7.14.1
+        version: 7.14.2(react-dom@19.2.5)(react@19.2.5)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.14.0
+        version: 22.19.17
+      '@vitejs/plugin-react':
+        specifier: ^5.0.4
+        version: 5.2.0(vite@6.4.2)
+      tailwindcss:
+        specifier: ^4.1.14
+        version: 4.2.4
+      typescript:
+        specifier: ~5.8.2
+        version: 5.8.3
+      vite:
+        specifier: ^6.2.0
+        version: 6.4.2(@types/node@22.19.17)
+
+  apps/sdk-example:
     dependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.14
@@ -103,49 +149,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^5.0.4
         version: 5.2.0(vite@6.4.2)
-      typescript:
-        specifier: ~5.8.2
-        version: 5.8.3
-      vite:
-        specifier: ^6.2.0
-        version: 6.4.2(@types/node@22.19.17)
-
-  apps/clientTheSchneiderHair:
-    dependencies:
-      '@tailwindcss/vite':
-        specifier: ^4.1.14
-        version: 4.2.4(vite@6.4.2)
-      artist-portal-sdk:
-        specifier: workspace:*
-        version: link:../../packages/artist-portal-sdk
-      firebase:
-        specifier: ^12.12.1
-        version: 12.12.1
-      lucide-react:
-        specifier: ^0.546.0
-        version: 0.546.0(react@19.2.5)
-      motion:
-        specifier: ^12.23.24
-        version: 12.38.0(react-dom@19.2.5)(react@19.2.5)
-      react:
-        specifier: ^19.0.0
-        version: 19.2.5
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.2.5(react@19.2.5)
-      react-router-dom:
-        specifier: ^7.14.1
-        version: 7.14.2(react-dom@19.2.5)(react@19.2.5)
-    devDependencies:
-      '@types/node':
-        specifier: ^22.14.0
-        version: 22.19.17
-      '@vitejs/plugin-react':
-        specifier: ^5.0.4
-        version: 5.2.0(vite@6.4.2)
-      tailwindcss:
-        specifier: ^4.1.14
-        version: 4.2.4
       typescript:
         specifier: ~5.8.2
         version: 5.8.3
@@ -2022,8 +2025,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
-    optional: true
 
   /@tailwindcss/oxide@4.2.4:
     resolution: {integrity: sha512-9El/iI069DKDSXwTvB9J4BwdO5JhRrOweGaK25taBAvBXyXqJAX+Jqdvs8r8gKpsI/1m0LeJLyQYTf/WLrBT1Q==}

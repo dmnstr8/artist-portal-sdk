@@ -1,61 +1,65 @@
-# The Schneider Hair Website
+# artist-portal-sdk Monorepo
 
-![Hero section preview](public/media/artist/artist-hero.jpeg)
+This repository contains:
 
-Marketing website and admin-managed content platform for The Schneider Hair.
+- `packages/artist-portal-sdk`: reusable SDK for Firebase bootstrap, Firestore content reads, shared domain types, and optional admin UI entrypoint.
+- `apps/sdk-example`: example Vite app that consumes the SDK.
 
-## For Client Stakeholders
+`apps/clientTheSchneiderHair` is currently in this repo but is not part of the primary scope and can be ignored for SDK-focused work.
 
-- Public site pages include services, artists, education FAQ, product recommendations, terms, and legal pages.
-- Content is managed through the admin dashboard and persisted to the cloud (database and file storage).
-- Brand and page content is sourced from JSON files in `public/data` and cloud-backed admin updates.
-- The production site is built as a static Vite app and deployed to cloud hosting.
+## Workspace Layout
 
-## For Developers
+- `packages/artist-portal-sdk/` publishable SDK package
+- `apps/sdk-example/` SDK integration example app
+- `apps/clientTheSchneiderHair/` legacy/client app (out of scope for this repo direction)
+- `firestore.rules` Firestore security rules
+- `firebase.json` Firebase CLI hosting/rules config
 
-### Tech Stack
+## Prerequisites
 
-- React 19 + TypeScript + Vite
-- Tailwind CSS 4
-- Cloud backend: auth, database, file storage, and hosting (Google Cloud client SDKs)
+- Node.js 20+
+- [pnpm](https://pnpm.io/) (Corepack recommended: `corepack enable`)
 
-### Project Structure
+## Install
 
-- `src/` app source code and routes/pages
-- `src/pages/AdminDashboard.tsx` admin content management UI
-- `public/data/` editable content seeds (`faq.json`, `services.json`, `reviews.json`, etc.)
-- `firestore.rules` security rules for the cloud database
-- `firebase.json` hosting and project tooling config (CLI)
-- `metadata.json` optional editor/applet metadata (not read by the Vite app at build or runtime)
-- `firebase-blueprint.json` informal schema-style notes for Firestore-shaped data (documentation only; not loaded by the app)
+```bash
+pnpm install
+```
 
-### Local Development
+## Common Commands
 
-Prerequisites: Node.js 20+ and [pnpm](https://pnpm.io/) (Corepack: `corepack enable`)
+### SDK package
 
-1. Install dependencies
-   `pnpm install`
-2. Create local env file
-   - Copy `.env.example` to `.env.local`
-   - Set values for `APP_API_KEY` (optional) and `APP_URL`
-3. Start dev server
-   `pnpm run dev`
+- Build SDK only: `pnpm run build:sdk`
 
-### Build and Deploy
+### Example app (`apps/sdk-example`)
 
-- Build production bundle: `pnpm run build:production`
-- Build release bundle: `pnpm run build:release`
-- Deploy hosting (production): `pnpm run deploy:hosting:production`
-- Deploy hosting (release): `pnpm run deploy:hosting:release`
-- Deploy cloud database rules:
-  - production: `pnpm run deploy:rules:production`
-  - release: `pnpm run deploy:rules:release`
+- Dev (production target mode): `pnpm run dev:sdk`
+- Dev (release target mode): `pnpm run dev:sdk:release`
+- Build SDK + example app (production mode): `pnpm run build:sdk:dev`
+- Build SDK + example app (release mode): `pnpm run build:sdk:release`
 
-### Environment Targeting
+### Client app helpers (optional)
 
-The app supports `production` and `release` cloud deployment targets.
+- Build selected client app: `pnpm run build:client:dev`
+- Build selected client app release: `pnpm run build:client:release`
+- Dev selected client app: `pnpm run dev:client`
+- Dev selected client app release: `pnpm run dev:client:release`
 
-- Preferred: use Vite mode (`--mode production` or `--mode release`)
-- Optional override: set `VITE_FIREBASE_TARGET=production|release`
+Use `CLIENT_APP=<pnpm-package-name>` to choose a specific client app for the client scripts.
 
-Target resolution lives in `src/lib/firebase.ts`.
+## Firebase Targets
+
+This repo supports two Firebase targets:
+
+- `production`
+- `release`
+
+Target selection is controlled by Vite mode and/or `VITE_FIREBASE_TARGET`.
+
+## Deploy Commands
+
+- Firestore rules (production): `pnpm run deploy:rules:production`
+- Firestore rules (release): `pnpm run deploy:rules:release`
+- Hosting (production): `pnpm run deploy:hosting:production`
+- Hosting (release): `pnpm run deploy:hosting:release`

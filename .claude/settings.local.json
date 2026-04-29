@@ -12,7 +12,7 @@
       "Bash(ls apps/)",
       "Bash(ls apps/clientTheSchneiderHair/src/)",
       "Bash(ls apps/clientTheSchneiderHair/public/)",
-      "Bash(pnpm --filter admin-shell run build)",
+      "Bash(pnpm --filter sdk-example run build)",
       "Bash(timeout 10 pnpm --filter client-theschneiderhair run dev)"
     ]
   }

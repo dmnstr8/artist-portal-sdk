@@ -17,7 +17,7 @@ export default function LandingPage() {
         className="relative z-10 flex flex-col items-center text-center gap-10"
       >
         <div className="space-y-3">
-          <p className="text-[9px] font-bold tracking-[0.5em] uppercase text-gold">theSchneider.hair</p>
+          <p className="text-[9px] font-bold tracking-[0.5em] uppercase text-gold">SDK Example</p>
           <h1 className="text-5xl font-serif text-stone-50 tracking-tight">Admin Portal</h1>
           <p className="text-xs text-stone-500 tracking-[0.25em] uppercase font-medium">
             Content management &amp; site editor
