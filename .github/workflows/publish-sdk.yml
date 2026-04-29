@@ -22,6 +22,6 @@ jobs:
           scope: '@dmnstr8'
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @dmnstr8/artist-portal-sdk run build
-      - run: pnpm publish --filter @dmnstr8/artist-portal-sdk --no-git-checks
+      - run: pnpm -r --filter @dmnstr8/artist-portal-sdk publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
