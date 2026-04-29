@@ -1,17 +1,18 @@
 # artist-portal-sdk Monorepo
 
+![SDK example landing page](assets/readme/sdk-example-landing.png)
+
 This repository contains:
 
 - `packages/artist-portal-sdk`: reusable SDK for Firebase bootstrap, Firestore content reads, shared domain types, and optional admin UI entrypoint.
 - `apps/sdk-example`: example Vite app that consumes the SDK.
 
-`apps/clientTheSchneiderHair` is currently in this repo but is not part of the primary scope and can be ignored for SDK-focused work.
+
 
 ## Workspace Layout
 
 - `packages/artist-portal-sdk/` publishable SDK package
 - `apps/sdk-example/` SDK integration example app
-- `apps/clientTheSchneiderHair/` legacy/client app (out of scope for this repo direction)
 - `firestore.rules` Firestore security rules
 - `firebase.json` Firebase CLI hosting/rules config
 
