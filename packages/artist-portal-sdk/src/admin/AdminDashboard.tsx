@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
-  defaultBookingProvidersData,
   emitAutoLogoutLeavingAdminChanged,
   emitGalleryHomeUpdated,
   emitRoundPricesUpToWholeAmountChanged,
@@ -173,6 +172,15 @@ const normalizeBookingProviderOptions = (raw: any): BookingProviderOption[] => {
     parsed.unshift({ id: 'salonized', label: 'Salonized', enabled: true });
   }
   return parsed;
+};
+
+const BOOKING_PROVIDERS_DEFAULT = {
+  providers: [
+    { id: 'salonized', label: 'Salonized', enabled: true },
+    { id: 'fresha', label: 'Fresha', enabled: true },
+    { id: 'booksy', label: 'Booksy', enabled: true },
+    { id: 'other', label: 'Other', enabled: true },
+  ],
 };
 
 const emptyArtistProfileDraft = {
@@ -370,7 +378,7 @@ const AdminDashboard = () => {
   const [bookingProviderMenuOpen, setBookingProviderMenuOpen] = useState(false);
   const bookingProviderMenuRef = useRef<HTMLDivElement | null>(null);
   const [bookingProviderOptions, setBookingProviderOptions] = useState<BookingProviderOption[]>(
-    normalizeBookingProviderOptions(defaultBookingProvidersData)
+    normalizeBookingProviderOptions(BOOKING_PROVIDERS_DEFAULT)
   );
   const [bookingWidgetCompany, setBookingWidgetCompany] = useState('m2yzkzSecfyaghBe93MNZGuc');
   const [bookingWidgetScriptSrc, setBookingWidgetScriptSrc] = useState(
@@ -926,7 +934,7 @@ const AdminDashboard = () => {
     } catch (err) {
       // Graceful fallback for the dashboard view
       try {
-        const [rRes, fRes, sRes, stRes, wRes, vlRes, gRes, apRes, rpRes, bpRes] = await Promise.all([
+        const [rRes, fRes, sRes, stRes, wRes, vlRes, gRes, apRes, rpRes] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}data/reviews.json`),
           fetch(`${import.meta.env.BASE_URL}data/faq.json`),
           fetch(`${import.meta.env.BASE_URL}data/services.json`),
@@ -936,9 +944,8 @@ const AdminDashboard = () => {
           fetch(`${import.meta.env.BASE_URL}data/gallery.json`),
           fetch(`${import.meta.env.BASE_URL}data/artistprofiles.json`),
           fetch(`${import.meta.env.BASE_URL}data/recommendedproducts.json`),
-          fetch(`${import.meta.env.BASE_URL}data/bookingproviders.json`),
         ]);
-        const [rJson, fJson, sJson, stJson, wJson, vlJson, gJson, apJson, rpJson, bpJson] = await Promise.all([
+        const [rJson, fJson, sJson, stJson, wJson, vlJson, gJson, apJson, rpJson] = await Promise.all([
           rRes.json(),
           fRes.json(),
           sRes.json(),
@@ -948,7 +955,6 @@ const AdminDashboard = () => {
           gRes.json(),
           apRes.json(),
           rpRes.json(),
-          bpRes.json(),
         ]);
         setReviews(rJson.map((text: string, i: number) => ({ id: `err-${i}`, text, isLocal: true })));
         setFaq(fJson.map((cat: any, i: number) => ({ id: `err-${i}`, ...cat, isLocal: true })));
@@ -974,7 +980,6 @@ const AdminDashboard = () => {
             }))
           )
         );
-        setBookingProviderOptions(normalizeBookingProviderOptions(bpJson));
         sourcesUpdate.reviews = 'local';
         sourcesUpdate.faq = 'local';
         sourcesUpdate.services = 'local';
@@ -1065,27 +1070,6 @@ const AdminDashboard = () => {
         /* keep defaults */
       }
       sourcesUpdate.widgets = 'local';
-    }
-
-    // 7. Fetch Booking Provider Catalog
-    try {
-      if (preferredSource === 'local') {
-        const pRes = await fetch(`${import.meta.env.BASE_URL}data/bookingproviders.json`);
-        const pJson = await pRes.json();
-        setBookingProviderOptions(normalizeBookingProviderOptions(pJson));
-      } else {
-        const providersSnap = await getDoc(doc(db, 'bookingproviders', 'catalog'));
-        if (providersSnap.exists()) {
-          setBookingProviderOptions(normalizeBookingProviderOptions(providersSnap.data()));
-        } else {
-          const pRes = await fetch(`${import.meta.env.BASE_URL}data/bookingproviders.json`);
-          const pJson = await pRes.json();
-          setBookingProviderOptions(normalizeBookingProviderOptions(pJson));
-        }
-      }
-    } catch (providersErr) {
-      console.warn('Could not fetch booking provider catalog:', providersErr);
-      setBookingProviderOptions(normalizeBookingProviderOptions(defaultBookingProvidersData));
     }
 
     try {
@@ -2917,7 +2901,7 @@ const AdminDashboard = () => {
     if (!confirm('Download a ZIP of all live cloud JSON data for local defaults?')) return;
     setSaving(true);
     try {
-      const [reviewsSnap, faqSnap, servicesSnap, settingsSnap, videolinksSnap, gallerySnap, artistsSnap, productsSnap, bookingProvidersSnap, widgetsSnap] =
+      const [reviewsSnap, faqSnap, servicesSnap, settingsSnap, videolinksSnap, gallerySnap, artistsSnap, productsSnap, widgetsSnap] =
         await Promise.all([
           getDocs(collection(db, 'reviews')),
           getDocs(collection(db, 'faq')),
@@ -2927,8 +2911,7 @@ const AdminDashboard = () => {
           getDoc(doc(db, 'gallery', 'home')),
           getDocs(collection(db, 'artistprofiles')),
           getDocs(collection(db, 'productcategories')),
-          getDoc(doc(db, 'bookingproviders', 'catalog')),
-        getDoc(doc(db, 'widgets', 'general')),
+          getDoc(doc(db, 'widgets', 'general')),
         ]);
 
       const reviewsJson = reviewsSnap.docs
@@ -3023,10 +3006,6 @@ const AdminDashboard = () => {
         })
         .sort((a, b) => a.order - b.order);
 
-      const bookingProvidersJson = normalizeBookingProviderOptions(
-        bookingProvidersSnap.exists() ? bookingProvidersSnap.data() : defaultBookingProvidersData
-      );
-
       const zip = new JSZip();
       zip.file('reviews.json', JSON.stringify(reviewsJson, null, 2));
       zip.file('faq.json', JSON.stringify(faqJson, null, 2));
@@ -3037,7 +3016,6 @@ const AdminDashboard = () => {
       zip.file('gallery.json', JSON.stringify(galleryJson, null, 2));
       zip.file('artistprofiles.json', JSON.stringify(artistProfilesJson, null, 2));
       zip.file('recommendedproducts.json', JSON.stringify(productsJson, null, 2));
-      zip.file('bookingproviders.json', JSON.stringify({ providers: bookingProvidersJson }, null, 2));
 
       const blob = await zip.generateAsync({ type: 'blob' });
       const now = new Date();
@@ -3144,14 +3122,6 @@ const AdminDashboard = () => {
           taggboxWidgetId: String(widgetsJson.taggboxWidgetId ?? ''),
           showSocialWidget: parseIncludeSocialSection(widgetsJson.showSocialWidget),
         },
-        { merge: true }
-      );
-
-      const bookingProvidersRes = await fetch(`${import.meta.env.BASE_URL}data/bookingproviders.json`);
-      const bookingProvidersJson = await bookingProvidersRes.json();
-      await setDoc(
-        doc(db, 'bookingproviders', 'catalog'),
-        { providers: normalizeBookingProviderOptions(bookingProvidersJson) },
         { merge: true }
       );
 

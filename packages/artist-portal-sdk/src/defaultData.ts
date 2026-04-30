@@ -20,7 +20,6 @@ export let defaultReviewsData: any[] = [];
 export let defaultServicesData: any = { en: [] };
 export let defaultSettingsData: any = {};
 export let defaultWidgetsData: any = {};
-export let defaultBookingProvidersData: any = { providers: [] };
 export let defaultVideoLinksData: any = { items: [] };
 export let defaultArtistProfilesData: any[] = [];
 export let defaultRecommendedProductsData: any[] = [];
@@ -32,7 +31,6 @@ void Promise.all([
   loadPublicJson<any>('services.json', { en: [] }).then(d => { defaultServicesData = d; }),
   loadPublicJson<any>('settings.json', {}).then(d => { defaultSettingsData = d; }),
   loadPublicJson<any>('widgets.json', {}).then(d => { defaultWidgetsData = d; }),
-  loadPublicJson<any>('bookingproviders.json', { providers: [] }).then(d => { defaultBookingProvidersData = d; }),
   loadPublicJson<any>('videolinks.json', { items: [] }).then(d => { defaultVideoLinksData = d; }),
   loadPublicJson<any[]>('artistprofiles.json', []).then(d => { defaultArtistProfilesData = d; }),
   loadPublicJson<any[]>('recommendedproducts.json', []).then(d => { defaultRecommendedProductsData = d; }),

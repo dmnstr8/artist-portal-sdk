@@ -175,24 +175,6 @@
       },
       "required": ["title", "link"]
     },
-    "BookingProvidersCatalog": {
-      "title": "Booking Providers Catalog",
-      "description": "Booking provider catalog configuration. Singleton document at bookingproviders/catalog.",
-      "type": "object",
-      "properties": {
-        "providers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "string" },
-              "name": { "type": "string" },
-              "scriptSrc": { "type": "string" }
-            }
-          }
-        }
-      }
-    },
     "WidgetsGeneral": {
       "title": "Widgets General",
       "description": "External widget configuration (booking, payment, social). Singleton document at widgets/general.",
@@ -246,10 +228,6 @@
     "/productcategories/{categoryId}": {
       "schema": "ProductStorefrontCategory",
       "description": "Product category cards on the Recommended Products page."
-    },
-    "/bookingproviders/{docId}": {
-      "schema": "BookingProvidersCatalog",
-      "description": "Booking provider catalog. Active document: bookingproviders/catalog."
     },
     "/widgets/{docId}": {
       "schema": "WidgetsGeneral",

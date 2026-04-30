@@ -83,12 +83,6 @@ service cloud.firestore {
       allow write: if isAdmin() && isValidId(categoryId);
     }
 
-    // Booking provider catalog (document bookingproviders/catalog)
-    match /bookingproviders/{docId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(docId);
-    }
-
     // External widgets config (document widgets/general)
     match /widgets/{docId} {
       allow read: if true;
