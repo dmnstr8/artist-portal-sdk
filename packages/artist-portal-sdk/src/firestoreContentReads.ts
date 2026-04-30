@@ -17,6 +17,7 @@ import type {
 } from './domain';
 import { normalizeGalleryHomeData } from './galleryNormalize';
 import { normalizeProductStorefrontCategory, sortProductStorefrontCategoriesByOrder } from './productStorefront';
+import { flattenReviewsFromFirestoreDocs, toPublicReviews } from './reviewsNormalize';
 import { normalizeVideoLinkItems, type VideoLinkItem } from './videoLinks';
 
 const DEFAULT_BOOKING_WIDGET_SCRIPT_SRC = 'https://static-widget.salonized.com/loader.js';
@@ -33,7 +34,9 @@ export async function readReviewsFromFirestore(db: Firestore): Promise<Review[] 
   try {
     const snap = await getDocs(collection(db, 'reviews'));
     if (snap.empty) return null;
-    return snap.docs.map((d) => ({ id: d.id, text: String(d.data().text ?? '') }));
+    const rows = flattenReviewsFromFirestoreDocs(snap.docs);
+    if (rows.length === 0) return null;
+    return toPublicReviews(rows);
   } catch {
     return null;
   }

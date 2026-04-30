@@ -42,19 +42,23 @@ import type {
 } from './domain';
 import { normalizeMediaStorageRoot } from './mediaStorageRoot';
 import { getPortalFirebase } from './portalFirebase';
+import { parseReviewsJsonPayload } from './reviewsNormalize';
 
 const portalDb = () => getPortalFirebase().db;
 
 const localId = (prefix: string, index: number) => `${prefix}-${index}`;
 
 export async function getReviewsWithFallback(): Promise<Review[]> {
+  const fromDefaults = () =>
+    parseReviewsJsonPayload(defaultReviewsData, 'temp').map((r, index) => ({
+      id: localId('local-review', index),
+      text: r.text,
+      isLocal: true as const,
+    }));
+
   const preferredSource = getContentDataSourceMode();
   if (preferredSource === 'local') {
-    return (defaultReviewsData as string[]).map((text, index) => ({
-      id: localId('local-review', index),
-      text,
-      isLocal: true,
-    }));
+    return fromDefaults();
   }
 
   const cloud = await readReviewsFromFirestore(portalDb());
@@ -62,11 +66,7 @@ export async function getReviewsWithFallback(): Promise<Review[]> {
     return cloud;
   }
 
-  return (defaultReviewsData as string[]).map((text, index) => ({
-    id: localId('local-review', index),
-    text,
-    isLocal: true,
-  }));
+  return fromDefaults();
 }
 
 export async function getFaqWithFallback(): Promise<FaqCategory[]> {

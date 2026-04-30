@@ -7,7 +7,8 @@ const repoRoot = path.resolve(__dirname, '../..');
 
 export default defineConfig({
   base: '/',
-  publicDir: path.join(repoRoot, 'public'),
+  /** Must be this app’s `public/` so `/data/*.json` and media resolve (not monorepo root `public/`, which is unused). */
+  publicDir: path.resolve(__dirname, 'public'),
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: [

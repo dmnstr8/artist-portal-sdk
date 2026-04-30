@@ -92,6 +92,11 @@ import {
   getDoc,
   serverTimestamp,
 } from 'firebase/firestore';
+import {
+  flattenReviewsFromFirestoreDocs,
+  parseReviewsJsonPayload,
+  rebuildAggregateReviewItems,
+} from '../reviewsNormalize';
 import { signOut } from 'firebase/auth';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { motion, AnimatePresence } from 'motion/react';
@@ -855,17 +860,25 @@ const AdminDashboard = () => {
       if (preferredSource === 'local') {
         const res = await fetch(`${import.meta.env.BASE_URL}data/reviews.json`);
         const json = await res.json();
-        setReviews(json.map((text: string, i: number) => ({ id: `temp-${i}`, text, isLocal: true })));
+        setReviews(parseReviewsJsonPayload(json, 'temp'));
         sourcesUpdate.reviews = 'local';
       } else {
         const reviewsSnap = await getDocs(collection(db, 'reviews'));
         if (!reviewsSnap.empty) {
-          setReviews(reviewsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-          sourcesUpdate.reviews = 'firebase';
+          const flat = flattenReviewsFromFirestoreDocs(reviewsSnap.docs);
+          if (flat.length > 0) {
+            setReviews(flat);
+            sourcesUpdate.reviews = 'firebase';
+          } else {
+            const res = await fetch(`${import.meta.env.BASE_URL}data/reviews.json`);
+            const json = await res.json();
+            setReviews(parseReviewsJsonPayload(json, 'temp'));
+            sourcesUpdate.reviews = 'local';
+          }
         } else {
           const res = await fetch(`${import.meta.env.BASE_URL}data/reviews.json`);
           const json = await res.json();
-          setReviews(json.map((text: string, i: number) => ({ id: `temp-${i}`, text, isLocal: true })));
+          setReviews(parseReviewsJsonPayload(json, 'temp'));
           sourcesUpdate.reviews = 'local';
         }
       }
@@ -956,7 +969,7 @@ const AdminDashboard = () => {
           apRes.json(),
           rpRes.json(),
         ]);
-        setReviews(rJson.map((text: string, i: number) => ({ id: `err-${i}`, text, isLocal: true })));
+        setReviews(parseReviewsJsonPayload(rJson, 'err'));
         setFaq(fJson.map((cat: any, i: number) => ({ id: `err-${i}`, ...cat, isLocal: true })));
         
         const unified = {
@@ -1314,11 +1327,47 @@ const AdminDashboard = () => {
     if (!newReview.trim() || !validateReviewBody(newReview)) return;
     setSaving(true);
     try {
-      const docRef = await addDoc(collection(db, 'reviews'), {
-        text: newReview,
-        createdAt: new Date().toISOString()
-      });
-      setReviews([...reviews, { id: docRef.id, text: newReview }]);
+      const fromState = reviews.find((r: any) => r._aggregateDocId)?._aggregateDocId as string | undefined;
+      let aggregateParent: string | null = fromState ?? null;
+      if (!aggregateParent) {
+        const homeRef = doc(db, 'reviews', 'home');
+        const hs = await getDoc(homeRef);
+        if (hs.exists() && Array.isArray((hs.data() as Record<string, unknown>).items)) {
+          aggregateParent = 'home';
+        }
+      }
+
+      if (aggregateParent) {
+        const ref = doc(db, 'reviews', aggregateParent);
+        const cur = await getDoc(ref);
+        const data = (cur.exists() ? cur.data() : {}) as Record<string, unknown>;
+        const items = Array.isArray(data.items) ? [...(data.items as Record<string, unknown>[])] : [];
+        const t = newReview.trim();
+        items.push({
+          quote: t,
+          text: t,
+          stars: 5,
+          firstName: '',
+          dateAdded: new Date().toISOString(),
+        });
+        await setDoc(
+          ref,
+          {
+            ...data,
+            items,
+            schemaVersion: typeof data.schemaVersion === 'number' ? data.schemaVersion : 1,
+          },
+          { merge: true }
+        );
+        const snap = await getDocs(collection(db, 'reviews'));
+        setReviews(flattenReviewsFromFirestoreDocs(snap.docs));
+      } else {
+        const docRef = await addDoc(collection(db, 'reviews'), {
+          text: newReview.trim(),
+          createdAt: new Date().toISOString(),
+        });
+        setReviews([...reviews, { id: docRef.id, text: newReview.trim() }]);
+      }
       setNewReview('');
     } catch (err) {
       handleFirestoreError(err, 'create', 'reviews');
@@ -1331,8 +1380,24 @@ const AdminDashboard = () => {
     if (!confirm('Delete this review?')) return;
     setSaving(true);
     try {
-      await deleteDoc(doc(db, 'reviews', id));
-      setReviews(reviews.filter(r => r.id !== id));
+      const row = reviews.find((r: any) => r.id === id);
+      if (row?._aggregateDocId != null && typeof row._itemIndex === 'number') {
+        const ref = doc(db, 'reviews', row._aggregateDocId);
+        const cur = await getDoc(ref);
+        if (!cur.exists()) {
+          setReviews(reviews.filter((e) => e.id !== id));
+          return;
+        }
+        const data = cur.data() as Record<string, unknown>;
+        const items = Array.isArray(data.items) ? [...(data.items as Record<string, unknown>[])] : [];
+        items.splice(row._itemIndex, 1);
+        await updateDoc(ref, { items });
+        const snap = await getDocs(collection(db, 'reviews'));
+        setReviews(flattenReviewsFromFirestoreDocs(snap.docs));
+      } else {
+        await deleteDoc(doc(db, 'reviews', id));
+        setReviews(reviews.filter((r) => r.id !== id));
+      }
     } catch (err) {
       handleFirestoreError(err, 'delete', `reviews/${id}`);
     } finally {
@@ -1354,10 +1419,25 @@ const AdminDashboard = () => {
     if (!editingReviewText.trim() || !validateReviewBody(editingReviewText)) return;
     setSaving(true);
     try {
-      await updateDoc(doc(db, 'reviews', id), {
-        text: editingReviewText.trim()
-      });
-      setReviews(reviews.map(r => (r.id === id ? { ...r, text: editingReviewText.trim() } : r)));
+      const row = reviews.find((r: any) => r.id === id);
+      const t = editingReviewText.trim();
+      if (row?._aggregateDocId != null && typeof row._itemIndex === 'number') {
+        const ref = doc(db, 'reviews', row._aggregateDocId);
+        const cur = await getDoc(ref);
+        if (!cur.exists()) return;
+        const data = cur.data() as Record<string, unknown>;
+        const items = Array.isArray(data.items) ? [...(data.items as Record<string, unknown>[])] : [];
+        const prev = items[row._itemIndex] ?? {};
+        items[row._itemIndex] = { ...prev, text: t, quote: t };
+        await updateDoc(ref, { items });
+        const snap = await getDocs(collection(db, 'reviews'));
+        setReviews(flattenReviewsFromFirestoreDocs(snap.docs));
+      } else {
+        await updateDoc(doc(db, 'reviews', id), {
+          text: t,
+        });
+        setReviews(reviews.map((r) => (r.id === id ? { ...r, text: t } : r)));
+      }
       cancelEditReview();
     } catch (err) {
       handleFirestoreError(err, 'update', `reviews/${id}`);
@@ -1379,9 +1459,9 @@ const AdminDashboard = () => {
     setSaving(true);
     try {
       const reviewsRes = await fetch(`${import.meta.env.BASE_URL}data/reviews.json`);
-      const reviewsJson: string[] = await reviewsRes.json();
+      const reviewsJson = await reviewsRes.json();
       cancelEditReview();
-      setReviews(reviewsJson.map((text, i) => ({ id: `temp-${i}`, text, isLocal: true })));
+      setReviews(parseReviewsJsonPayload(reviewsJson, 'temp'));
       setDataSources((prev) => ({ ...prev, reviews: 'local' }));
       alert('Reviews loaded from local defaults. Push to Cloud to publish.');
     } catch (err) {
@@ -1399,7 +1479,7 @@ const AdminDashboard = () => {
     setSaving(true);
     try {
       const reviewsSnap = await getDocs(collection(db, 'reviews'));
-      setReviews(reviewsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setReviews(flattenReviewsFromFirestoreDocs(reviewsSnap.docs));
       setDataSources((prev) => ({ ...prev, reviews: 'firebase' }));
       alert('Reviews loaded from cloud.');
     } catch (err) {
@@ -1428,7 +1508,28 @@ const AdminDashboard = () => {
     }
     setSaving(true);
     try {
-      for (const r of reviews) {
+      const aggParents = new Set(
+        reviews.map((r: any) => r._aggregateDocId).filter((x: unknown): x is string => typeof x === 'string' && x !== '')
+      );
+      for (const parentId of aggParents) {
+        const rowsForParent = reviews.filter((r: any) => r._aggregateDocId === parentId);
+        const ref = doc(db, 'reviews', parentId);
+        const cur = await getDoc(ref);
+        const prev = (cur.exists() ? cur.data() : {}) as Record<string, unknown>;
+        const newItems = rebuildAggregateReviewItems(rowsForParent);
+        await setDoc(
+          ref,
+          {
+            ...prev,
+            items: newItems,
+            schemaVersion: typeof prev.schemaVersion === 'number' ? prev.schemaVersion : 1,
+          },
+          { merge: true }
+        );
+      }
+
+      const legacyRows = reviews.filter((r: any) => !r._aggregateDocId);
+      for (const r of legacyRows) {
         const text = String(r.text ?? '').trim();
         const id = String(r.id ?? '');
         if (id.startsWith('temp-') || id.startsWith('err-')) {
@@ -1443,7 +1544,7 @@ const AdminDashboard = () => {
 
       cancelEditReview();
       const snap = await getDocs(collection(db, 'reviews'));
-      setReviews(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setReviews(flattenReviewsFromFirestoreDocs(snap.docs));
       setDataSources((prev) => ({ ...prev, reviews: 'firebase' }));
 
       alert('Reviews pushed to cloud successfully.');
@@ -2914,9 +3015,7 @@ const AdminDashboard = () => {
           getDoc(doc(db, 'widgets', 'general')),
         ]);
 
-      const reviewsJson = reviewsSnap.docs
-        .map((d) => String(d.data().text ?? '').trim())
-        .filter((t) => t !== '');
+      const reviewsJson = flattenReviewsFromFirestoreDocs(reviewsSnap.docs).map((r) => r.text);
 
       const faqJson = faqSnap.docs
         .map((d) => d.data() as any)
@@ -3059,9 +3158,21 @@ const AdminDashboard = () => {
       }
       
       const reviewsRes = await fetch(`${import.meta.env.BASE_URL}data/reviews.json`);
-      const reviewsJson = await reviewsRes.json();
-      for (const text of reviewsJson) {
-        await addDoc(collection(db, 'reviews'), { text, createdAt: new Date().toISOString() });
+      const reviewsRaw = await reviewsRes.json();
+      if (Array.isArray(reviewsRaw)) {
+        if (reviewsRaw.length > 0 && typeof reviewsRaw[0] === 'string') {
+          for (const text of reviewsRaw as string[]) {
+            await addDoc(collection(db, 'reviews'), { text, createdAt: new Date().toISOString() });
+          }
+        } else if (reviewsRaw.length > 0) {
+          await setDoc(doc(db, 'reviews', 'home'), { schemaVersion: 1, items: reviewsRaw }, { merge: false });
+        }
+      } else if (
+        reviewsRaw &&
+        typeof reviewsRaw === 'object' &&
+        Array.isArray((reviewsRaw as Record<string, unknown>).items)
+      ) {
+        await setDoc(doc(db, 'reviews', 'home'), reviewsRaw as Record<string, unknown>, { merge: false });
       }
 
       // 2. Clear and Migrate FAQ
