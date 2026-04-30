@@ -196,17 +196,6 @@ export async function readGalleryHomeFromFirestore(db: Firestore): Promise<Galle
   }
 }
 
-/** Raw marketing doc (caller validates shape and merges onto bundled defaults). */
-export async function readSiteCopyEnDocumentFromFirestore(db: Firestore): Promise<Record<string, unknown> | null> {
-  try {
-    const snap = await getDoc(doc(db, 'sitecopy', 'en'));
-    if (!snap.exists()) return null;
-    return snap.data() as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
-
 export function stripFirestoreServerFields(data: Record<string, unknown>): Record<string, unknown> {
   const next = { ...data };
   for (const key of ['updatedAt', 'createdAt']) {

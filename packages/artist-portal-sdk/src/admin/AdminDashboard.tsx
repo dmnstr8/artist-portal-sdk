@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
-  bundledMarketingDefault,
   defaultBookingProvidersData,
   emitAutoLogoutLeavingAdminChanged,
   emitGalleryHomeUpdated,
-  emitMarketingSiteCopyUpdated,
   emitRoundPricesUpToWholeAmountChanged,
   emitShowArtistsPageChanged,
   emitShowFaqPageChanged,
@@ -15,12 +13,9 @@ import {
   emitShowThemeSelectorChanged,
   emitShowVideoSectionChanged,
   extractYoutubeVideoId,
-  fetchMarketingSiteCopyMergedFromFirestore,
   getContentDataSourceMode,
   getLocationSiteEditorSettings,
-  getMarketingSiteCopyWithFallback,
   getPortalFirebase,
-  isValidMarketingSiteCopyPayload,
   isValidYoutubeVideoUrl,
   normalizeProductStorefrontCategory,
   normalizeVideoLinkItems,
@@ -138,9 +133,7 @@ import {
   MapPin,
   Image,
   PanelTopOpen,
-  Braces,
 } from 'lucide-react';
-import { MarketingSiteCopyJsonEditor } from './MarketingSiteCopyJsonEditor';
 type ArtistProfile = {
   id: string;
   firstName: string;
@@ -274,7 +267,6 @@ type AdminTabId =
   | 'inquiries'
   | 'settings'
   | 'externalWidgets'
-  | 'marketingSiteCopy'
   | 'siteLocation'
   | 'gallery'
   | 'videolinks'
@@ -284,7 +276,6 @@ type AdminTabId =
 const SETTINGS_SUBNAV: { id: AdminTabId; label: string; icon: typeof Mail }[] = [
   { id: 'settings', label: 'General', icon: Settings },
   { id: 'externalWidgets', label: 'External Widgets', icon: PanelTopOpen },
-  { id: 'marketingSiteCopy', label: 'Display Text On Page', icon: Braces },
   { id: 'siteLocation', label: 'Location Settings', icon: MapPin },
   { id: 'gallery', label: 'Gallery', icon: Image },
   { id: 'reviews', label: 'Reviews', icon: Star },
@@ -306,7 +297,6 @@ const DATA_SOURCE_LED_KEYS = [
   'gallery',
   'artistprofiles',
   'products',
-  'sitecopy',
 ] as const;
 
 const AdminDashboard = () => {
@@ -411,9 +401,6 @@ const AdminDashboard = () => {
   const [contentDataSourceModeState, setContentDataSourceModeState] = useState<ContentDataSourceMode>(() =>
     getContentDataSourceMode()
   );
-  const [marketingSiteCopyJson, setMarketingSiteCopyJson] = useState('');
-  const [marketingSiteCopyEditorKey, setMarketingSiteCopyEditorKey] = useState(0);
-  const [marketingSiteCopyNotice, setMarketingSiteCopyNotice] = useState('');
   const [siteLocationDraft, setSiteLocationDraft] = useState(() => getLocationSiteEditorSettings());
   const [galleryHome, setGalleryHome] = useState<GalleryHomeData>(() => normalizeGalleryHomeData({}));
   const [showGalleryTileModal, setShowGalleryTileModal] = useState(false);
@@ -437,7 +424,6 @@ const AdminDashboard = () => {
     gallery: 'unknown',
     artistprofiles: 'unknown',
     products: 'unknown',
-    sitecopy: 'unknown',
   });
   const [cloudReadable, setCloudReadable] = useState<{
     reviews: boolean;
@@ -447,7 +433,6 @@ const AdminDashboard = () => {
     gallery: boolean;
     artistprofiles: boolean;
     products: boolean;
-    sitecopy: boolean;
   }>({
     reviews: true,
     faq: true,
@@ -456,7 +441,6 @@ const AdminDashboard = () => {
     gallery: true,
     artistprofiles: true,
     products: true,
-    sitecopy: true,
   });
   const [firebaseConnected, setFirebaseConnected] = useState(true);
 
@@ -731,25 +715,6 @@ const AdminDashboard = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    if (activeTab !== 'marketingSiteCopy') return;
-    let cancelled = false;
-    void (async () => {
-      try {
-        const { data } = await getMarketingSiteCopyWithFallback();
-        if (cancelled) return;
-        setMarketingSiteCopyJson(JSON.stringify(data, null, 2));
-        setMarketingSiteCopyEditorKey((k) => k + 1);
-        setMarketingSiteCopyNotice('');
-      } catch {
-        if (!cancelled) setMarketingSiteCopyNotice('Could not load marketing copy.');
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeTab]);
-
-  useEffect(() => {
     const onPointerDownOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node | null;
       if (!target) return;
@@ -1019,7 +984,6 @@ const AdminDashboard = () => {
         sourcesUpdate.videolinks = 'local';
         sourcesUpdate.gallery = 'local';
         sourcesUpdate.artistprofiles = 'local';
-        sourcesUpdate.sitecopy = 'local';
       } catch (fallbackErr) {
         console.error("Critical: Local JSON files missing or inaccessible", fallbackErr);
       }
@@ -1297,31 +1261,12 @@ const AdminDashboard = () => {
       sourcesUpdate.products = 'local';
     }
 
-    // Marketing display text (sitecopy/en)
-    try {
-      if (preferredSource === 'local') {
-        sourcesUpdate.sitecopy = 'local';
-      } else {
-        const sitecopySnap = await getDoc(doc(db, 'sitecopy', 'en'));
-        if (sitecopySnap.exists()) {
-          const raw: Record<string, unknown> = { ...(sitecopySnap.data() as Record<string, unknown>) };
-          delete raw.updatedAt;
-          delete raw.createdAt;
-          sourcesUpdate.sitecopy = isValidMarketingSiteCopyPayload(raw) ? 'firebase' : 'local';
-        } else {
-          sourcesUpdate.sitecopy = 'local';
-        }
-      }
-    } catch {
-      sourcesUpdate.sitecopy = 'local';
-    }
-
     setDataSources(sourcesUpdate);
     setLoading(false);
   };
 
   const refreshCloudReadability = async () => {
-    const [reviewsRes, faqRes, servicesRes, videolinksRes, galleryRes, artistsRes, productsRes, settingsRes, sitecopyRes] =
+    const [reviewsRes, faqRes, servicesRes, videolinksRes, galleryRes, artistsRes, productsRes, settingsRes] =
       await Promise.allSettled([
         getDocs(collection(db, 'reviews')),
         getDocs(collection(db, 'faq')),
@@ -1331,7 +1276,6 @@ const AdminDashboard = () => {
         getDocs(collection(db, 'artistprofiles')),
         getDocs(collection(db, 'productcategories')),
         getDoc(doc(db, 'settings', 'general')),
-        getDoc(doc(db, 'sitecopy', 'en')),
       ]);
     // Gallery/home is optional until Firestore rules exist; do not fail whole "cloud connected" UI.
     const connected =
@@ -1351,7 +1295,6 @@ const AdminDashboard = () => {
       gallery: galleryRes.status === 'fulfilled',
       artistprofiles: artistsRes.status === 'fulfilled',
       products: productsRes.status === 'fulfilled',
-      sitecopy: sitecopyRes.status === 'fulfilled',
     });
   };
 
@@ -3489,7 +3432,6 @@ const AdminDashboard = () => {
                       { id: 'gallery', label: 'Gallery' },
                       { id: 'artistprofiles', label: 'Artists' },
                       { id: 'products', label: 'Products' },
-                      { id: 'sitecopy', label: 'Marketing copy' },
                     ].map((source) => (
                       <div key={source.id} className="flex items-center justify-between gap-2">
                         <span className="text-[10px] font-semibold uppercase tracking-widest text-stone-800 dark:text-stone-200">
@@ -5540,168 +5482,6 @@ const AdminDashboard = () => {
                       document.body
                     )
                   : null}
-              </motion.div>
-            )}
-
-            {activeTab === 'marketingSiteCopy' && (
-              <motion.div
-                key="marketingSiteCopy"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-8"
-              >
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-serif text-stone-900">Display Text On Page</h2>
-                  <p className="text-sm text-stone-500 font-light max-w-2xl">
-                    Public marketing strings (navigation, home sections, education page, products page, admin login labels).
-                    Legal and terms pages stay in repository JSON only. Cloud document:{' '}
-                    <code className="text-xs bg-stone-100 px-1 rounded">sitecopy/en</code>. Local fallback file:{' '}
-                    <code className="text-xs bg-stone-100 px-1 rounded">public/data/site-copy.en.json</code>.
-                  </p>
-                </div>
-                {marketingSiteCopyNotice ? (
-                  <p className="text-sm text-stone-600 font-light">{marketingSiteCopyNotice}</p>
-                ) : null}
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    disabled={saving}
-                    onClick={() => {
-                      if (
-                        !confirm(
-                          'Load shipped marketing defaults from the app bundle into this editor? This replaces any unsaved changes in the JSON editor.'
-                        )
-                      ) {
-                        return;
-                      }
-                      setMarketingSiteCopyJson(JSON.stringify(bundledMarketingDefault, null, 2));
-                      setMarketingSiteCopyEditorKey((k) => k + 1);
-                      setMarketingSiteCopyNotice('');
-                      alert('Marketing copy loaded from local defaults. Push to Cloud to publish.');
-                    }}
-                    className={adminActionButtonClass}
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${saving ? 'animate-spin' : ''}`} /> Load values from defaults
-                  </button>
-                  <button
-                    type="button"
-                    disabled={cloudActionDisabled || !cloudReadable.sitecopy}
-                    onClick={async () => {
-                      if (!firebaseConnected) {
-                        alert('Cloud is not connected.');
-                        return;
-                      }
-                      if (
-                        !confirm(
-                          'Load marketing copy from Firestore (sitecopy/en) into this editor? This replaces the current editor contents. Missing keys are filled from the app bundle.'
-                        )
-                      ) {
-                        return;
-                      }
-                      setSaving(true);
-                      try {
-                        const data = await fetchMarketingSiteCopyMergedFromFirestore();
-                        if (!data) {
-                          alert(
-                            'No valid sitecopy/en in cloud (or unreachable). Try defaults, then edit and push.'
-                          );
-                          return;
-                        }
-                        setMarketingSiteCopyJson(JSON.stringify(data, null, 2));
-                        setMarketingSiteCopyEditorKey((k) => k + 1);
-                        setMarketingSiteCopyNotice('');
-                        alert('Marketing copy loaded from cloud.');
-                      } catch {
-                        setCloudReadable((prev) => ({ ...prev, sitecopy: false }));
-                        alert('Could not load from cloud.');
-                      } finally {
-                        setSaving(false);
-                      }
-                    }}
-                    className={adminActionButtonClass}
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${saving ? 'animate-spin' : ''}`} /> Load from cloud
-                  </button>
-                  <button
-                    type="button"
-                    disabled={cloudActionDisabled}
-                    onClick={async () => {
-                      if (!firebaseConnected) {
-                        alert('Cloud is not connected.');
-                        return;
-                      }
-                      let parsed: unknown;
-                      try {
-                        parsed = JSON.parse(marketingSiteCopyJson);
-                      } catch {
-                        alert('Invalid JSON.');
-                        return;
-                      }
-                      if (!isValidMarketingSiteCopyPayload(parsed)) {
-                        alert('Payload must look like English marketing copy (locale "en" and brand.siteName).');
-                        return;
-                      }
-                      const parsedPayload = parsed as Record<string, unknown>;
-                      if (
-                        !confirm(
-                          'Push current marketing copy to Firestore as sitecopy/en? This overwrites the stored document.'
-                        )
-                      ) {
-                        return;
-                      }
-                      setSaving(true);
-                      try {
-                        await setDoc(doc(db, 'sitecopy', 'en'), {
-                          ...parsedPayload,
-                          updatedAt: serverTimestamp(),
-                        });
-                        emitMarketingSiteCopyUpdated();
-                        setDataSources((prev) => ({ ...prev, sitecopy: 'firebase' }));
-                        setMarketingSiteCopyNotice('');
-                        alert(
-                          'Marketing site copy pushed to cloud successfully. The public site picks up changes on reload (or when content source uses cloud).'
-                        );
-                      } catch (e) {
-                        alert('Push to cloud failed for marketing site copy.');
-                        handleFirestoreError(e, 'write', 'sitecopy/en');
-                      } finally {
-                        setSaving(false);
-                      }
-                    }}
-                    className={adminActionButtonClass}
-                  >
-                    <Upload className="w-3.5 h-3.5" /> Push to Cloud
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      try {
-                        setJsonModalData(JSON.parse(marketingSiteCopyJson));
-                      } catch {
-                        alert('Invalid JSON — fix the editor before opening source view.');
-                      }
-                    }}
-                    className={adminSecondaryActionButtonClass}
-                  >
-                    <Code className="w-3.5 h-3.5" /> Source Code
-                  </button>
-                </div>
-                <p className="text-[11px] text-stone-500 font-light">
-                  Push requires a signed-in admin and reachable Firestore. Use General → content source if the public site
-                  should read local JSON instead of cloud.
-                </p>
-                <div className="space-y-2 max-w-5xl">
-                  <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400">
-                    JSON editor (tree / code / text / preview)
-                  </span>
-                  <div key={marketingSiteCopyEditorKey}>
-                    <MarketingSiteCopyJsonEditor
-                      value={marketingSiteCopyJson}
-                      onChangeText={setMarketingSiteCopyJson}
-                    />
-                  </div>
-                </div>
               </motion.div>
             )}
 

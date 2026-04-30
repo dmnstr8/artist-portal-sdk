@@ -209,22 +209,6 @@
         "showSocialWidget": { "type": "boolean" }
       }
     },
-    "SiteCopyEn": {
-      "title": "Marketing Site Copy (EN)",
-      "description": "All editable marketing copy for the public site. Singleton document at sitecopy/en. Shape mirrors MarketingCopy in artist-portal-sdk. Legal/terms text is not stored here.",
-      "type": "object",
-      "properties": {
-        "locale": { "type": "string", "enum": ["en"] },
-        "brand": {
-          "type": "object",
-          "properties": {
-            "siteName": { "type": "string" }
-          },
-          "required": ["siteName"]
-        }
-      },
-      "required": ["locale", "brand"]
-    }
   },
   "firestore": {
     "/reviews/{reviewId}": {
@@ -271,9 +255,5 @@
       "schema": "WidgetsGeneral",
       "description": "External widget configuration. Active document: widgets/general."
     },
-    "/sitecopy/{docId}": {
-      "schema": "SiteCopyEn",
-      "description": "Marketing site copy. Active document: sitecopy/en. Deep-merged over bundled defaults."
-    }
   }
 }

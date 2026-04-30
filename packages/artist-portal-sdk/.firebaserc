@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "artist-portal-sdk-dev",
+    "production": "artist-portal-sdk-dev",
+    "release": "artist-portal-sdk-release"
+  }
+}

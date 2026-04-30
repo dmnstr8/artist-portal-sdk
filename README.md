@@ -13,8 +13,10 @@ This repository contains:
 
 - `packages/artist-portal-sdk/` publishable SDK package
 - `apps/sdk-example/` SDK integration example app
-- `firestore.rules` Firestore security rules
-- `firebase.json` Firebase CLI hosting/rules config
+- `packages/artist-portal-sdk/firebase.json`   Firebase CLI hosting/rules config template
+- `packages/artist-portal-sdk/.firebaserc`     Firebase build patterns template
+- `packages/artist-portal-sdk/firestore.rules` Firestore security rules template
+- `packages/artist-portal-sdk/storage.rules`   Firebase storage rules tempalte
 
 ## Prerequisites
 
@@ -35,23 +37,15 @@ pnpm install
 
 ### Example app (`apps/sdk-example`)
 
-- Dev (production target mode): `pnpm run dev:sdk`
+- Dev (production target mode): `pnpm run dev:sdk:dev`
 - Dev (release target mode): `pnpm run dev:sdk:release`
 - Build SDK + example app (production mode): `pnpm run build:sdk:dev`
 - Build SDK + example app (release mode): `pnpm run build:sdk:release`
 
-### Client app helpers (optional)
-
-- Build selected client app: `pnpm run build:client:dev`
-- Build selected client app release: `pnpm run build:client:release`
-- Dev selected client app: `pnpm run dev:client`
-- Dev selected client app release: `pnpm run dev:client:release`
-
-Use `CLIENT_APP=<pnpm-package-name>` to choose a specific client app for the client scripts.
 
 ## Firebase Targets
 
-This repo supports two Firebase targets:
+The sdk-example app supports two Firebase targets:
 
 - `production`
 - `release`
@@ -60,7 +54,7 @@ Target selection is controlled by Vite mode and/or `VITE_FIREBASE_TARGET`.
 
 ## Deploy Commands
 
-- Firestore rules (production): `pnpm run deploy:rules:production`
-- Firestore rules (release): `pnpm run deploy:rules:release`
-- Hosting (production): `pnpm run deploy:hosting:production`
-- Hosting (release): `pnpm run deploy:hosting:release`
+- Firestore rules (production): `pnpm --filter sdk-example run deploy:rules:production`
+- Firestore rules (release): `   pnpm --filter sdk-example run deploy:rules:release`
+- Hosting (production): `        pnpm --filter sdk-example run deploy:hosting:production`
+- Hosting (release): `           pnpm --filter sdk-example run deploy:hosting:release`

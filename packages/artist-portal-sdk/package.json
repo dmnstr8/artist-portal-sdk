@@ -3,7 +3,7 @@
   "version": "0.1.9",
   "description": "Shared Firebase client factory, Firestore content helpers, and optional admin UI for artist marketing sites and portals.",
   "type": "module",
-  "license": "Apache-2.0",
+  "license": "SEE LICENSE IN LICENSE.md",
   "sideEffects": [
     "**/*.css",
     "./src/admin/**/*.tsx"
@@ -26,7 +26,10 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE.md",
+    "LICENSE-NONCOMMERCIAL.md",
+    "LICENSE-COMMERCIAL.md"
   ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

@@ -7,7 +7,6 @@ export {
   readReviewsFromFirestore,
   readServicesEnFromFirestore,
   readSettingsGeneralFromFirestore,
-  readSiteCopyEnDocumentFromFirestore,
   readVideoLinksHomeFromFirestore,
   readWidgetsGeneralFromFirestore,
   stripFirestoreServerFields,
@@ -43,10 +42,8 @@ export {
 
 export { registerPortalFirebase, getPortalFirebase, type PortalFirebaseBundle } from './portalFirebase';
 export * from './defaultData';
-export { bundledMarketingDefault, type MarketingCopy } from './marketingBundled';
 export { normalizeMediaStorageRoot } from './mediaStorageRoot';
 export * from './contentDataSource';
-export * from './siteCopyEvents';
 export * from './settingsEvents';
 export * from './siteEditorSettings';
 export * from './contentRepository';

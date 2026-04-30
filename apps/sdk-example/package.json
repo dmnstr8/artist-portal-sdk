@@ -11,7 +11,18 @@
     "build": "vite build",
     "build:release": "vite build --mode release",
     "preview": "vite preview --port=3000",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+
+
+    "deploy:rules": "pnpm run deploy:rules:production",
+    "deploy:rules:production": "firebase deploy --only firestore:rules -P production",
+    "deploy:rules:release": "firebase deploy --only firestore:rules -P release",
+    "deploy:hosting:production": "pnpm run build:production && firebase deploy --only hosting -P production",
+    "deploy:hosting:release": "pnpm run build:release && firebase deploy --only hosting -P release",
+    "deploy:live": "pnpm run deploy:hosting:release"
+
+
+
   },
   "dependencies": {
     "artist-portal-sdk": "workspace:*",

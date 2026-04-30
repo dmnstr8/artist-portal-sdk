@@ -6,20 +6,14 @@
   "packageManager": "pnpm@8.14.1",
   "scripts": {
     "build:sdk": "pnpm --filter @dmnstr8/artist-portal-sdk run build",
-    "build:sdk:dev": "pnpm --filter @dmnstr8/artist-portal-sdk run build && pnpm --filter sdk-example run build",
+    "build:sdk:example": "pnpm --filter @dmnstr8/artist-portal-sdk run build && pnpm --filter sdk-example run build",
     "build:sdk:release": "pnpm --filter @dmnstr8/artist-portal-sdk run build && pnpm --filter sdk-example run build:release",
-    "dev:sdk:dev": "pnpm --filter sdk-example run dev",
+    "dev:sdk:example": "pnpm --filter sdk-example run dev",
     "dev:sdk:release": "pnpm --filter sdk-example run dev:release",
-    "clean": "node scripts/clean-docs.mjs",
-    "sync:public-assets": "node scripts/sync-public-assets.mjs",
-    "lint": "pnpm run build:sdk && pnpm --filter artist-portal-sdk run lint",
-    "seed:videolinks": "node scripts/seed-videolinks-firestore.mjs",
-    "deploy:rules": "pnpm run deploy:rules:production",
-    "deploy:rules:production": "firebase deploy --only firestore:rules -P production",
-    "deploy:rules:release": "firebase deploy --only firestore:rules -P release",
-    "deploy:hosting:production": "pnpm run build:production && firebase deploy --only hosting -P production",
-    "deploy:hosting:release": "pnpm run build:release && firebase deploy --only hosting -P release",
-    "deploy:live": "pnpm run deploy:hosting:release"
+   
+    "lint": "pnpm run build:sdk && pnpm --filter artist-portal-sdk run lint"
+  
+
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",

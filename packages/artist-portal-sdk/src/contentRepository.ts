@@ -8,7 +8,6 @@ import {
   readReviewsFromFirestore,
   readServicesEnFromFirestore,
   readSettingsGeneralFromFirestore,
-  readSiteCopyEnDocumentFromFirestore,
   readVideoLinksHomeFromFirestore,
   readWidgetsGeneralFromFirestore,
   stripFirestoreServerFields,
@@ -41,7 +40,6 @@ import type {
   SettingsData,
   WidgetsData,
 } from './domain';
-import { bundledMarketingDefault, type MarketingCopy } from './marketingBundled';
 import { normalizeMediaStorageRoot } from './mediaStorageRoot';
 import { getPortalFirebase } from './portalFirebase';
 
@@ -300,107 +298,3 @@ export async function getGalleryHomeWithFallback(): Promise<GalleryHomeData> {
   return normalizeGalleryHomeData(defaultGalleryData);
 }
 
-function isPlainRecord(v: unknown): v is Record<string, unknown> {
-  return v !== null && typeof v === 'object' && !Array.isArray(v);
-}
-
-function isMarketingCopyShape(data: unknown): data is MarketingCopy {
-  if (!data || typeof data !== 'object') return false;
-  const o = data as Record<string, unknown>;
-  const brand = o.brand;
-  return (
-    o.locale === 'en' &&
-    brand != null &&
-    typeof brand === 'object' &&
-    typeof (brand as Record<string, unknown>).siteName === 'string'
-  );
-}
-
-/** Deep-merge overlay onto base; arrays from overlay replace entirely. */
-function deepMergePlainRecords(base: Record<string, unknown>, overlay: Record<string, unknown>): Record<string, unknown> {
-  const out: Record<string, unknown> = { ...base };
-  for (const key of Object.keys(overlay)) {
-    const ov = overlay[key];
-    const bv = base[key];
-    if (Array.isArray(ov)) {
-      out[key] = ov;
-    } else if (isPlainRecord(ov) && isPlainRecord(bv)) {
-      out[key] = deepMergePlainRecords(bv, ov);
-    } else if (ov !== undefined) {
-      out[key] = ov;
-    }
-  }
-  return out;
-}
-
-/** Never replace the bundled tree with a partial doc — shallow Firestore saves cannot blank the UI. */
-function mergeMarketingOverlay(overlay: Record<string, unknown>): MarketingCopy {
-  const base = cloneBundledMarketing() as unknown as Record<string, unknown>;
-  return deepMergePlainRecords(base, overlay) as unknown as MarketingCopy;
-}
-
-/** For admin save / import validation (marketing JSON only). */
-export function isValidMarketingSiteCopyPayload(data: unknown): data is MarketingCopy {
-  return isMarketingCopyShape(data);
-}
-
-function cloneBundledMarketing(): MarketingCopy {
-  return JSON.parse(JSON.stringify(bundledMarketingDefault)) as MarketingCopy;
-}
-
-export type MarketingSiteCopyLoadSource = 'firebase' | 'local-file' | 'bundle';
-
-export async function getMarketingSiteCopyWithFallback(): Promise<{
-  data: MarketingCopy;
-  source: MarketingSiteCopyLoadSource;
-}> {
-  const preferredSource = getContentDataSourceMode();
-
-  const fromPublicJson = async (): Promise<MarketingCopy | null> => {
-    try {
-      const res = await fetch(`${import.meta.env.BASE_URL}data/site-copy.en.json`);
-      if (!res.ok) return null;
-      const j: unknown = await res.json();
-      if (!isMarketingCopyShape(j) || !isPlainRecord(j)) return null;
-      return mergeMarketingOverlay(j);
-    } catch {
-      return null;
-    }
-  };
-
-  if (preferredSource === 'local') {
-    const j = await fromPublicJson();
-    if (j) return { data: j, source: 'local-file' };
-    return { data: cloneBundledMarketing(), source: 'bundle' };
-  }
-
-  try {
-    const rawDoc = await readSiteCopyEnDocumentFromFirestore(portalDb());
-    if (rawDoc) {
-      const raw = stripFirestoreServerFields(rawDoc);
-      if (isMarketingCopyShape(raw)) {
-        return { data: mergeMarketingOverlay(raw), source: 'firebase' };
-      }
-    }
-  } catch {
-    // fall through to public JSON / bundle
-  }
-
-  const j = await fromPublicJson();
-  if (j) return { data: j, source: 'local-file' };
-
-  return { data: cloneBundledMarketing(), source: 'bundle' };
-}
-
-/** Admin "Load from cloud": read Firestore `sitecopy/en` merged onto bundled defaults; null if missing or invalid. */
-export async function fetchMarketingSiteCopyMergedFromFirestore(): Promise<MarketingCopy | null> {
-  try {
-    const rawDoc = await readSiteCopyEnDocumentFromFirestore(portalDb());
-    if (!rawDoc) return null;
-    const raw = stripFirestoreServerFields(rawDoc);
-    if (!isMarketingCopyShape(raw)) return null;
-    return mergeMarketingOverlay(raw);
-  } catch {
-    return null;
-  }
-}

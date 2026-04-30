@@ -6,45 +6,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development
-pnpm dev                        # Start dev server (port 3000, all interfaces)
-pnpm dev:release                # Dev server targeting the release Firebase project
+pnpm dev:sdk:example       # Dev server for sdk-example against production Firebase (port 3000)
+pnpm dev:sdk:release   # Dev server for sdk-example against release Firebase (port 4000)
 
 # Build
-pnpm build                      # Build SDK then Vite app (default/production mode)
-pnpm build:production           # Vite build in production mode
-pnpm build:release              # Vite build in release mode
-pnpm build:sdk                  # Compile SDK only (tsc -p tsconfig.build.json)
+pnpm build:sdk         # Build the SDK package only
+pnpm build:sdk:example     # Build SDK + sdk-example (production mode)
+pnpm build:sdk:release # Build SDK + sdk-example (release mode)
 
 # Type-check (no separate lint step)
-pnpm lint                       # Builds SDK then runs tsc --noEmit on root
+pnpm lint              # Builds SDK, then runs tsc --noEmit on sdk-example
 
-# Deploy
-pnpm deploy:hosting:production  # Build production + deploy to production Firebase
-pnpm deploy:hosting:release     # Build release + deploy to release Firebase
-pnpm deploy:rules               # Deploy Firestore rules to production
-
-# Utilities
-pnpm seed:videolinks            # Seed Firestore videolinks collection from local data
-pnpm sync:public-assets         # Sync public assets
-pnpm clean                      # Run clean-docs script
+# Deploy (run from apps/sdk-example)
+pnpm --filter sdk-example deploy:rules:production  # Deploy firestore rules to production project
+pnpm --filter sdk-example deploy:rules:release     # Deploy firestore rules to release project
+pnpm --filter sdk-example deploy:live              # Build release + deploy hosting to release project
 ```
 
 There is **no test framework** configured in this project.
 
 ## Architecture
 
-This is a pnpm monorepo with one workspace package:
+This is a pnpm monorepo with two workspace packages:
 
 ```
-TheSchneider.Hair/
-├── packages/artist-portal-sdk/   # Reusable Firebase + content SDK
-└── src/                          # Root Vite app (The Schneider Hair site)
+artist-portal-sdk/
+├── packages/artist-portal-sdk/   # Publishable SDK (@dmnstr8/artist-portal-sdk)
+└── apps/sdk-example/             # Demo + admin portal app that consumes the SDK
 ```
 
-### artist-portal-sdk (`packages/artist-portal-sdk`)
+### SDK (`packages/artist-portal-sdk`)
 
-A publishable, reusable SDK with two entry points:
-- **`.`** — Firebase client factory, Firestore content reads, domain types
+Published to GitHub Packages as `@dmnstr8/artist-portal-sdk`. Two entry points:
+- **`.`** — Firebase client factory, Firestore content reads, domain types, default data
 - **`./admin`** — Admin dashboard UI (lazy-loadable, kept out of public bundle)
 
 Key files:
@@ -53,63 +47,71 @@ Key files:
 - `firestoreContentReads.ts` — All Firestore read helpers for public collections
 - `domain.ts` — Shared TypeScript types (Review, FaqCategory, GalleryHomeData, etc.)
 - `resolveTarget.ts` — Picks `production` vs `release` Firebase project based on Vite mode or `VITE_FIREBASE_TARGET`
+- `contentDataSource.ts` / `contentRepository.ts` — Content data access abstractions
+- `marketingBundled.ts` — Bundled `MarketingCopy` defaults
+- `siteCopyEvents.ts` / `settingsEvents.ts` / `siteEditorSettings.ts` — Event and settings utilities
+- `videoLinks.ts` — YouTube video link helpers
+- `productStorefront.ts` — Product/storefront category normalization
+- `defaultData.ts` — Fallback/seed data
 
-Path aliases (defined in root `tsconfig.json` and `vite.config.ts`):
-- `artist-portal-sdk` → `packages/artist-portal-sdk/src/index.ts`
-- `artist-portal-sdk/admin` → `packages/artist-portal-sdk/src/admin/index.ts`
+Admin entry (`src/admin/`):
+- `AdminDashboard.tsx` — Main admin CMS shell
+- `AdminLoginPage.tsx` — Auth gate
+- `AdminPortalRoutes.tsx` — Admin route definitions
+- `MarketingSiteCopyJsonEditor.tsx` — JSON-based site copy editor
+- `VideolinksEmbedLightbox.tsx` — Video link management UI
+- `ProtectedRoute.tsx` — Auth-guarded route wrapper
+- `cloudHealthProbe.ts` / `adminValidation.ts` — Admin utilities
 
-### Root App (`src/`)
+SDK build: `tsc -p tsconfig.build.json && node scripts/copy-css.mjs`
 
-React 19 + React Router DOM 7 marketing site with an embedded admin CMS:
+### sdk-example App (`apps/sdk-example`)
+
+A Vite + React 19 + React Router DOM 7 app that demonstrates and tests the SDK. Serves as the actual deployed admin portal.
 
 ```
-src/
-├── app/          Routes and app-level components
-├── pages/        Lazy-loaded pages (FAQ, Artists, Products, Admin, Legal, Terms)
-├── home/         Landing page sections (Hero, Gallery, Nav, Footer, etc.)
-├── components/   Reusable UI
-├── lib/          Firebase bootstrap, Salonized booking widget, hash routing detection
-├── context/      SiteCopyContext, ThemeContext
-├── repositories/ Firestore data-access layer
-├── hooks/        Custom hooks
-└── content/      Content formatting & legal page assembly
+apps/sdk-example/src/
+├── App.tsx         # Router setup
+├── LandingPage.tsx # Entry screen → navigates to /artist-login
+└── main.tsx        # App bootstrap
 ```
 
-### Content Data Flow
+Routes: Landing page → `/artist-login` (AdminLoginPage) → admin dashboard (AdminPortalRoutes).
 
-Content comes from two sources with a fallback pattern:
-1. **Firestore** — Live content (reviews, FAQ, services, gallery, sitecopy, videolinks, etc.)
-2. **Local JSON** (`public/data/`) — Seed/fallback data when Firestore returns `null`
-
-Firestore reads return `null` on missing docs; the app supplies local JSON as fallback.
+Firebase configs live in `apps/sdk-example/`:
+- `firebase-applet-config.production.json` — `Points to Dev Project in Firbase Console` project
+- `firebase-applet-config.release.json` — `Points to Release Project in Firbase Console` project
+- `firestore.rules` / `storage.rules` / `firebase.json`
 
 ### Firebase / Environment
 
-Two Firebase projects with separate configs:
-- **production** → `theschneiderhair-dev` (used by default dev/build)
-- **release** → `theschneiderhair-59173` (used with `--mode release`)
+Two Firebase projects:
+- **production** → `Firebase Console Dev Project` (default dev/build, port 3000)
+- **release** → `Firebse Console Release project` (`--mode release`, port 4000)
 
-Firebase config files: `firebase-applet-config.production.json` and `firebase-applet-config.release.json`. Target is resolved by `resolveTarget.ts` from Vite mode or `VITE_FIREBASE_TARGET` env var.
+Target is resolved by `resolveTarget.ts` from Vite mode or `VITE_FIREBASE_TARGET` env var.
 
-Environment variables (see `.env.example`):
-- `VITE_FIREBASE_TARGET` — Override Firebase project selection (`production` | `release`)
-- `APP_URL` — Self-referential URL for OAuth callbacks and links
-- `APP_API_KEY` — Optional external integration key
-- `VITE_HOST_BASE` — Optional asset path prefix
+### Path Aliases
+
+Defined in both root `tsconfig.json` and `apps/sdk-example/vite.config.ts`:
+- `artist-portal-sdk` → `packages/artist-portal-sdk/src/index.ts`
+- `artist-portal-sdk/admin` → `packages/artist-portal-sdk/src/admin/index.ts`
+
+These aliases let the sdk-example import SDK source directly during dev without a build step.
 
 ### Firestore Security Model
 
-`firestore.rules` enforces:
+`apps/sdk-example/firestore.rules` enforces:
 - Default deny all
 - **Public reads**: reviews, faq, services, settings, videolinks, gallery, artistprofiles, productcategories, bookingproviders, widgets, sitecopy
-- **Admin writes**: via custom auth claim, `/admins/{uid}` doc presence, or email allowlist
+- **Admin writes**: via custom auth claim `{ admin: true }`, `/admins/{uid}` doc presence, or email allowlist
 - **Public create only**: inquiries collection (anonymous contact form submissions)
 
-Schema is documented in `firebase-blueprint.json`.
+Schema is documented in `packages/artist-portal-sdk/firebase-blueprint.json`.
 
 ### SDK Build Requirement
 
-**The SDK must be built before the root app.** `pnpm build` and `pnpm lint` both run `build:sdk` first. During development, `src/lib/firebase.ts` imports from the SDK via path alias (resolved directly to source), so a full SDK build is not required for `pnpm dev`.
+**The SDK must be built before the root app for production builds.** `pnpm build:sdk:dev` and `pnpm build:sdk:release` both run `build:sdk` first via `prebuild` scripts. During development, the sdk-example imports from the SDK via path alias (resolved directly to source), so a full SDK build is not required for `pnpm dev:sdk:dev`.
 
 ## graphify
 
