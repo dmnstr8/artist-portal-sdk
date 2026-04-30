@@ -12,7 +12,7 @@
     "dev:sdk:release": "pnpm --filter sdk-example run dev:release",
     "clean": "node scripts/clean-docs.mjs",
     "sync:public-assets": "node scripts/sync-public-assets.mjs",
-    "lint": "pnpm run build:sdk && pnpm --filter client-theschneiderhair run lint",
+    "lint": "pnpm run build:sdk && pnpm --filter artist-portal-sdk run lint",
     "seed:videolinks": "node scripts/seed-videolinks-firestore.mjs",
     "deploy:rules": "pnpm run deploy:rules:production",
     "deploy:rules:production": "firebase deploy --only firestore:rules -P production",

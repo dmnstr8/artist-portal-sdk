@@ -5,10 +5,10 @@
  * @license Apache-2.0
  */
 
-export const SITE_EDITOR_SETTINGS_CHANGED = 'theschneider:siteEditorSettingsChanged';
+export const SITE_EDITOR_SETTINGS_CHANGED = 'artistPortal:siteEditorSettingsChanged';
 
-const LS_LOCATION = 'theschneider.siteEditor.location';
-const LS_PAGE_TEXT = 'theschneider.siteEditor.pageText';
+const LS_LOCATION = 'artistPortal.siteEditor.location';
+const LS_PAGE_TEXT = 'artistPortal.siteEditor.pageText';
 
 export type LocationSiteEditorSettings = {
   headingLine1: string;

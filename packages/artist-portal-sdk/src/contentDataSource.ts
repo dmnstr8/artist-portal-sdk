@@ -1,6 +1,6 @@
-export const CONTENT_DATA_SOURCE_MODE_EVENT = 'theschneider:contentDataSourceModeChanged';
-export const GALLERY_HOME_UPDATED_EVENT = 'theschneider:galleryHomeUpdated';
-const CONTENT_DATA_SOURCE_MODE_KEY = 'theschneider.contentDataSourceMode';
+export const CONTENT_DATA_SOURCE_MODE_EVENT = 'artistPortal:contentDataSourceModeChanged';
+export const GALLERY_HOME_UPDATED_EVENT = 'artistPortal:galleryHomeUpdated';
+const CONTENT_DATA_SOURCE_MODE_KEY = 'artistPortal.contentDataSourceMode';
 
 export function emitGalleryHomeUpdated() {
   window.dispatchEvent(new CustomEvent(GALLERY_HOME_UPDATED_EVENT));

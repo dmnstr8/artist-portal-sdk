@@ -3,16 +3,16 @@
  * @license Apache-2.0
  */
 
-export const AUTO_LOGOUT_LEAVING_ADMIN_EVENT = 'theschneider:autoLogoutLeavingAdmin';
-export const SHOW_THEME_SELECTOR_EVENT = 'theschneider:showThemeSelector';
-export const SHOW_ARTISTS_PAGE_EVENT = 'theschneider:showArtistsPage';
-export const SHOW_PRODUCTS_PAGE_EVENT = 'theschneider:showProductsPage';
-export const SHOW_REVIEWS_SECTION_EVENT = 'theschneider:showReviewsSection';
-export const SHOW_PRICING_SECTION_EVENT = 'theschneider:showPricingSection';
-export const ROUND_PRICES_UP_TO_WHOLE_AMOUNT_EVENT = 'theschneider:roundPricesUpToWholeAmount';
-export const SHOW_VIDEO_SECTION_EVENT = 'theschneider:showVideoSection';
-export const SHOW_GALLERY_SECTION_EVENT = 'theschneider:showGallerySection';
-export const SHOW_FAQ_PAGE_EVENT = 'theschneider:showFaqPage';
+export const AUTO_LOGOUT_LEAVING_ADMIN_EVENT = 'artistPortal:autoLogoutLeavingAdmin';
+export const SHOW_THEME_SELECTOR_EVENT = 'artistPortal:showThemeSelector';
+export const SHOW_ARTISTS_PAGE_EVENT = 'artistPortal:showArtistsPage';
+export const SHOW_PRODUCTS_PAGE_EVENT = 'artistPortal:showProductsPage';
+export const SHOW_REVIEWS_SECTION_EVENT = 'artistPortal:showReviewsSection';
+export const SHOW_PRICING_SECTION_EVENT = 'artistPortal:showPricingSection';
+export const ROUND_PRICES_UP_TO_WHOLE_AMOUNT_EVENT = 'artistPortal:roundPricesUpToWholeAmount';
+export const SHOW_VIDEO_SECTION_EVENT = 'artistPortal:showVideoSection';
+export const SHOW_GALLERY_SECTION_EVENT = 'artistPortal:showGallerySection';
+export const SHOW_FAQ_PAGE_EVENT = 'artistPortal:showFaqPage';
 
 export function emitAutoLogoutLeavingAdminChanged(value: boolean) {
   window.dispatchEvent(

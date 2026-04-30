@@ -1,0 +1,70 @@
+{
+  "images": [
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "Seamless Extensions",
+      "order": 0,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-2.jpeg",
+      "label": "Signature Blonde",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-3.jpeg",
+      "label": "Dimensional Color",
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-4.jpeg",
+      "label": "Balayage Mastery",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-5.jpeg",
+      "label": "Flawless Blend",
+      "order": 4,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "",
+      "order": 5,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "",
+      "order": 6,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "",
+      "order": 7,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "",
+      "order": 8,
+      "enabled": true
+    },
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "",
+      "order": 9,
+      "enabled": false
+    },
+    {
+      "src": "portfolio-1.jpeg",
+      "label": "",
+      "order": 10,
+      "enabled": false
+    }
+  ]
+}
